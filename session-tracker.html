@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<!--
+	Spectral template was written by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+    Adopted by Maven Capitol Consulting (mavencapitolconsulting@gmail.com)
+-->
+<html>
+
+<head>
+	<title>Session Tracker - Maven Capitol Consulting</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<noscript>
+		<link rel="stylesheet" href="assets/css/noscript.css" />
+	</noscript>
+</head>
+
+<body class="is-preload">
+
+	<!-- Page Wrapper -->
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<header id="header">
+			<h1><a href="index.html">Maven Capitol Consulting</a></h1>
+			<nav id="nav">
+				<ul>
+					<li class="special">
+						<a href="#menu" class="menuToggle"><span>Menu</span></a>
+						<div id="menu">
+							<ul>
+								<li><a href="index.html">Home</a></li>
+								<li><a href="what-we-do.html">What We Do</a></li>
+								<li><a href="session-tracker.html">Session Tracker</a></li>
+								<li><a href="why-maven.html">Why Maven</a></li>
+								<li><a href="index.html#contact">Contact</a></li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</nav>
+		</header>
+
+		<!-- Main -->
+		<article id="main">
+			<header>
+				<h2>Maryland General Assembly Session Tracker</h2>
+				<p>Know exactly when the 90-day session begins and ends so you can plan accordingly</p>
+			</header>
+			<section class="wrapper style5">
+				<div class="inner">
+
+					<h3>Current Session Information</h3>
+					<div class="table-wrapper">
+						<table class="alt">
+							<tbody>
+								<tr>
+									<td><strong>Session Start:</strong></td>
+									<td><span id="sessionStart">-</span></td>
+								</tr>
+								<tr>
+									<td><strong>Sine Die (Last Day):</strong></td>
+									<td><span id="sessionEnd">-</span></td>
+								</tr>
+								<tr>
+									<td><strong>Session Length:</strong></td>
+									<td>90 days</td>
+								</tr>
+								<tr>
+									<td><strong>Current Status:</strong></td>
+									<td><span id="sessionStatus" style="font-weight: bold;">Calculating...</span></td>
+								</tr>
+								<tr>
+									<td><strong>Days Until Session Starts:</strong></td>
+									<td><span id="daysToStart" style="font-size: 1.5em; color: #6600cc;">-</span></td>
+								</tr>
+								<tr>
+									<td><strong>Days Until Sine Die:</strong></td>
+									<td><span id="daysToEnd" style="font-size: 1.5em; color: #6600cc;">-</span></td>
+								</tr>
+								<tr>
+									<td><strong>Last Updated:</strong></td>
+									<td><span id="lastUpdated">-</span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<hr />
+
+					<h4>Understanding Maryland's Legislative Calendar</h4>
+					<p>The Maryland General Assembly follows a consistent legislative calendar each year. Understanding these key dates is essential for planning your advocacy strategy and staying informed about pending legislation.</p>
+
+					<p><strong>Session Start:</strong> The Maryland General Assembly convenes on the second Wednesday of January each year. This marks the beginning of the 90-day regular session.</p>
+
+					<p><strong>Sine Die:</strong> This Latin term means "without a day" and refers to the final day of the legislative session—typically 90 days after the session begins. After Sine Die, no more bills can be considered during that year's regular session.</p>
+
+					<p><strong>Why This Matters:</strong> All bills that have not passed both chambers by Sine Die are dead for that legislative year. This creates critical deadlines for legislation you care about, making timely advocacy and awareness essential.</p>
+
+					<hr />
+
+					<h4>Planning Your Legislative Engagement</h4>
+					<p>Use this session tracker to:</p>
+					<ul class="alt">
+						<li><strong>Mark Key Dates:</strong> Note when the session starts and ends so you can schedule advocacy activities.</li>
+						<li><strong>Monitor Progress:</strong> Track how many days remain to advocate for or against specific bills.</li>
+						<li><strong>Plan Ahead:</strong> Use the pre-session period to identify relevant bills and develop your response strategy.</li>
+						<li><strong>Act Quickly:</strong> During the session, prioritize bills coming up for votes in the days remaining.</li>
+						<li><strong>Understand Deadlines:</strong> Know when Sine Die approaches so you can escalate efforts for bills that haven't passed yet.</li>
+					</ul>
+
+					<hr />
+
+					<h4>Get Real-Time Bill Intelligence</h4>
+					<p>This session tracker gives you key dates, but Maven Capitol Consulting gives you everything else: detailed tracking of every bill, machine-learning analysis of which bills matter to your business, and expert recommendations on how to respond.</p>
+
+					<p>Don't wait for surprises. Contact us today to learn how we can help you stay ahead of Maryland legislation and protect your business interests.</p>
+
+				</div>
+			</section>
+		</article>
+
+		<!-- Footer -->
+		<footer id="footer">
+			<ul class="icons">
+				<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+				<li><a href="#" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+				<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+			</ul>
+			<ul class="copyright">
+				<li>&copy; 2024 Maven Capitol Consulting</li>
+				<li>Expert Legislative Intelligence for Maryland Businesses</li>
+				<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+			</ul>
+		</footer>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.scrollex.min.js"></script>
+	<script src="assets/js/jquery.scrolly.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+
+	<script>
+		// Function to calculate the second Wednesday of January for a given year
+		function getSecondWednesday(year) {
+			const january1 = new Date(year, 0, 1);
+			const dayOfWeek = january1.getDay();
+
+			// Calculate days to first Wednesday (0 = Sunday, 3 = Wednesday)
+			let daysToFirstWed = (3 - dayOfWeek + 7) % 7;
+			if (daysToFirstWed === 0 && january1.getDay() !== 3) {
+				daysToFirstWed = 7;
+			}
+
+			// Add 7 more days to get the second Wednesday
+			const secondWednesday = new Date(year, 0, 1 + daysToFirstWed + 7);
+			return secondWednesday;
+		}
+
+		// Function to add days to a date
+		function addDays(date, days) {
+			const result = new Date(date);
+			result.setDate(result.getDate() + days);
+			return result;
+		}
+
+		// Function to format date for display
+		function formatDate(date) {
+			return date.toLocaleDateString('en-US', {
+				weekday: 'long',
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric'
+			});
+		}
+
+		// Function to calculate days between two dates
+		function daysBetween(date1, date2) {
+			const oneDay = 24 * 60 * 60 * 1000;
+			return Math.ceil((date2 - date1) / oneDay);
+		}
+
+		// Main function to update countdown
+		function updateCountdown() {
+			const today = new Date();
+			const currentYear = today.getFullYear();
+
+			// Calculate session dates for current year
+			let sessionStart = getSecondWednesday(currentYear);
+
+			// If we're past this year's session start, calculate for next year
+			if (today > sessionStart) {
+				sessionStart = getSecondWednesday(currentYear + 1);
+			}
+
+			// Calculate sine die (90 days after start)
+			const sessionEnd = addDays(sessionStart, 89);
+
+			// Calculate days remaining
+			const daysToStart = daysBetween(today, sessionStart);
+			const daysToEnd = daysBetween(today, sessionEnd);
+
+			// Update display elements
+			document.getElementById('daysToStart').textContent = Math.max(0, daysToStart);
+			document.getElementById('daysToEnd').textContent = Math.max(0, daysToEnd);
+			document.getElementById('sessionStart').textContent = formatDate(sessionStart);
+			document.getElementById('sessionEnd').textContent = formatDate(sessionEnd);
+			document.getElementById('lastUpdated').textContent = today.toLocaleString();
+
+			// Update session status
+			const statusElement = document.getElementById('sessionStatus');
+			if (today < sessionStart) {
+				statusElement.textContent = 'Pre-Session Period';
+				statusElement.style.color = '#ffc107';
+			} else if (today <= sessionEnd) {
+				statusElement.textContent = 'Session In Progress';
+				statusElement.style.color = '#28a745';
+			} else {
+				statusElement.textContent = 'Post-Session Period';
+				statusElement.style.color = '#dc3545';
+			}
+		}
+
+		// Update countdown immediately and then periodically
+		updateCountdown();
+		setInterval(updateCountdown, 60000); // Update every minute
+	</script>
+
+</body>
+
+</html>
