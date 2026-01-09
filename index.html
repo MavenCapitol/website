@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maven Capitol Consulting - Maryland Legislative Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mirador&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,15 +15,15 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #f5f5f5;
-            background-color: #000;
+            color: #000;
+            background-color: #F5F5F5;
         }
 
         /* Loading Screen Section */
         .loading-section {
             width: 100%;
             height: 100vh;
-            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            background: linear-gradient(135deg, #F5F5F5 0%, #FFFFFF 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -36,7 +37,7 @@
         }
 
         .logo-container img {
-            max-width: 300px;
+            max-width: 400px;
             height: auto;
             filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15));
         }
@@ -53,13 +54,13 @@
         }
 
         .loading-text {
-            font-family: 'Trajan Pro', 'Garamond', 'Georgia', 'Palatino', serif;
+            font-family: 'Mirador', serif;
             font-size: 2.5rem;
             font-weight: 400;
             letter-spacing: 0.15em;
             text-align: center;
-            color: #F5F5F5;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            color: #000;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
             height: 3.5rem;
             display: flex;
             align-items: center;
@@ -75,7 +76,7 @@
             opacity: 0;
             animation: fadeInLetter 0.08s ease-out forwards;
             display: inline;
-            color: #f5f5f5;
+            color: #000;
         }
 
         @keyframes fadeInLetter {
@@ -89,12 +90,12 @@
 
         /* Navigation */
         nav {
-            background: #000;
+            background: #F5F5F5;
             padding: 1rem 2rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         nav .container {
@@ -106,7 +107,7 @@
         }
 
         nav .logo-text {
-            color: #f5f5f5;
+            color: #000;
             font-size: 1.5rem;
             font-weight: bold;
         }
@@ -118,19 +119,19 @@
         }
 
         nav a {
-            color: #f5f5f5;
+            color: #000;
             text-decoration: none;
             transition: color 0.3s;
         }
 
         nav a:hover {
-            color: #AAA;
+            color: #555;
         }
 
         /* Hero Section */
         .hero {
-            background: #000;
-            color: #f5f5f5;
+            background: #F5F5F5;
+            color: #000;
             padding: 4rem 2rem;
             text-align: center;
         }
@@ -155,7 +156,7 @@
         .hero-logo img {
             max-width: 280px;
             height: auto;
-            filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.1));
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
         }
 
         .hero-content {
@@ -168,32 +169,32 @@
             font-size: 2.8rem;
             margin-bottom: 1rem;
             text-shadow: none;
-            color: #f5f5f5;
+            color: #000;
         }
 
         .hero p {
             font-size: 1.2rem;
             margin-bottom: 2rem;
             opacity: 0.95;
-            color: #f5f5f5;
+            color: #000;
         }
 
         .cta-button {
             display: inline-block;
-            background-color: #f5f5f5;
-            color: #000;
+            background-color: #000;
+            color: #F5F5F5;
             padding: 0.8rem 2rem;
             border-radius: 5px;
             text-decoration: none;
             font-weight: bold;
             transition: all 0.3s;
-            border: 2px solid #f5f5f5;
+            border: 2px solid #000;
         }
 
         .cta-button:hover {
             background-color: transparent;
-            color: #f5f5f5;
-            border-color: #f5f5f5;
+            color: #000;
+            border-color: #000;
         }
 
         /* Container */
@@ -206,8 +207,8 @@
         /* What We Do Section */
         .what-we-do {
             padding: 4rem 2rem;
-            background-color: #000;
-            color: #f5f5f5;
+            background-color: #F5F5F5;
+            color: #000;
         }
 
         .what-we-do .container {
@@ -219,13 +220,13 @@
 
         .what-we-do h2 {
             font-size: 2.2rem;
-            color: #f5f5f5;
+            color: #000;
             margin-bottom: 1.5rem;
         }
 
         .what-we-do p {
             font-size: 1.1rem;
-            color: #CCC;
+            color: #333;
             margin-bottom: 1.5rem;
             line-height: 1.8;
         }
@@ -239,7 +240,7 @@
             padding: 0.8rem 0;
             padding-left: 2rem;
             position: relative;
-            color: #CCC;
+            color: #333;
             font-size: 1rem;
         }
 
@@ -247,7 +248,7 @@
             content: "✓";
             position: absolute;
             left: 0;
-            color: #f5f5f5;
+            color: #000;
             font-weight: bold;
             font-size: 1.3rem;
         }
@@ -266,8 +267,8 @@
         /* Countdown Section */
         .countdown-section {
             padding: 4rem 2rem;
-            background: #000;
-            color: #f5f5f5;
+            background: #F5F5F5;
+            color: #000;
         }
 
         .countdown-section .container {
@@ -278,14 +279,14 @@
             font-size: 2.2rem;
             margin-bottom: 0.5rem;
             text-shadow: none;
-            color: #f5f5f5;
+            color: #000;
         }
 
         .countdown-section > .container > p {
             font-size: 1.1rem;
             opacity: 0.9;
             margin-bottom: 3rem;
-            color: #f5f5f5;
+            color: #000;
         }
 
         .countdown-container {
@@ -297,24 +298,24 @@
         }
 
         .countdown-box {
-            background: rgba(245, 245, 245, 0.1);
+            background: rgba(0, 0, 0, 0.05);
             backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 2rem;
             min-width: 280px;
-            border: 1px solid rgba(245, 245, 245, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .countdown-box:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .countdown-title {
             font-size: 1.2rem;
             margin-bottom: 1rem;
-            color: #f5f5f5;
+            color: #000;
         }
 
         .countdown-number {
@@ -322,27 +323,27 @@
             font-weight: bold;
             margin-bottom: 0.5rem;
             text-shadow: none;
-            color: #f5f5f5;
+            color: #000;
         }
 
         .countdown-label {
             font-size: 0.95rem;
             opacity: 0.9;
-            color: #f5f5f5;
+            color: #000;
         }
 
         .session-info {
-            background: rgba(245, 245, 245, 0.1);
+            background: rgba(0, 0, 0, 0.05);
             backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 2rem;
-            border: 1px solid rgba(245, 245, 245, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             max-width: 600px;
             margin: 0 auto 2rem;
         }
 
         .session-info h3 {
-            color: #f5f5f5;
+            color: #000;
             margin-bottom: 1rem;
             font-size: 1.3rem;
         }
@@ -350,7 +351,7 @@
         .session-info p {
             margin-bottom: 0.8rem;
             font-size: 1rem;
-            color: #f5f5f5;
+            color: #000;
         }
 
         .status {
@@ -363,33 +364,33 @@
 
         .status.pre-session {
             background: rgba(255, 193, 7, 0.3);
-            color: #FFD700;
-            border: 1px solid #FFD700;
+            color: #B8860B;
+            border: 1px solid #B8860B;
         }
 
         .status.in-session {
             background: rgba(76, 175, 80, 0.3);
-            color: #A5D6A7;
-            border: 1px solid #A5D6A7;
+            color: #2E7D32;
+            border: 1px solid #2E7D32;
         }
 
         .status.post-session {
             background: rgba(244, 67, 54, 0.3);
-            color: #EF9A9A;
-            border: 1px solid #EF9A9A;
+            color: #C62828;
+            border: 1px solid #C62828;
         }
 
         /* Why Maven Section */
         .why-maven {
             padding: 4rem 2rem;
-            background-color: #000;
-            color: #f5f5f5;
+            background-color: #F5F5F5;
+            color: #000;
         }
 
         .why-maven h2 {
             text-align: center;
             font-size: 2.2rem;
-            color: #f5f5f5;
+            color: #000;
             margin-bottom: 3rem;
         }
 
@@ -400,33 +401,33 @@
         }
 
         .benefit-card {
-            background: #1a1a1a;
+            background: #FFF;
             padding: 2rem;
             border-radius: 10px;
-            border-left: 4px solid #f5f5f5;
+            border-left: 4px solid #000;
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .benefit-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         .benefit-card h3 {
-            color: #f5f5f5;
+            color: #000;
             margin-bottom: 1rem;
             font-size: 1.3rem;
         }
 
         .benefit-card p {
-            color: #CCC;
+            color: #333;
             line-height: 1.8;
         }
 
         /* Footer */
         footer {
-            background-color: #000;
-            color: #f5f5f5;
+            background-color: #F5F5F5;
+            color: #000;
             padding: 2rem;
             text-align: center;
         }
@@ -436,7 +437,7 @@
         }
 
         footer h3 {
-            color: #f5f5f5;
+            color: #000;
         }
 
         /* Responsive */
@@ -472,7 +473,7 @@
             }
 
             .logo-container img {
-                max-width: 200px;
+                max-width: 280px;
             }
         }
     </style>
@@ -525,11 +526,12 @@
                 <p><strong>Our Core Mission:</strong> Ensure you stay fully informed of every bill introduced or amended in the Maryland General Assembly—so your business is never caught off guard.</p>
 
                 <ul class="features-list">
-                    <li>Hourly bill tracking and analysis</li>
-                    <li>ML-powered legislative intelligence</li>
+                    <li>Real-time bill tracking and analysis</li>
+                    <li>AI-powered legislative intelligence</li>
                     <li>Impact assessment for your business</li>
                     <li>Actionable insights and recommendations</li>
-                    <li>Expert economic consulting services</li>
+                    <li>Session countdown and timeline tracking</li>
+                    <li>Expert consulting services</li>
                 </ul>
             </div>
             <div class="what-we-do-image">
