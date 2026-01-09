@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maven Capitol Consulting - Maryland Legislative Intelligence</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #F5F5F5;
+            background-color: #000;
+        }
+
+        /* Loading Screen Section */
+        .loading-section {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .logo-container {
+            margin-bottom: 3rem;
+            animation: fadeInLogo 2s ease-in-out forwards;
+        }
+
+        .logo-container img {
+            max-width: 300px;
+            height: auto;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15));
+        }
+
+        @keyframes fadeInLogo {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .loading-text {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            text-align: center;
+            color: #F5F5F5;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-text-content {
+            min-height: 1em;
+        }
+
+        .loading-text-content span {
+            opacity: 0;
+            animation: fadeInLetter 0.08s ease-out forwards;
+            display: inline;
+            color: #F5F5F5;
+        }
+
+        @keyframes fadeInLetter {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Navigation */
+        nav {
+            background: #000;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo-text {
+            color: #F5F5F5;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #F5F5F5;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #AAA;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: #000;
+            color: #F5F5F5;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 3rem;
+        }
+
+        .hero-logo {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-logo img {
+            max-width: 280px;
+            height: auto;
+            filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.1));
+        }
+
+        .hero-content {
+            flex: 1;
+            min-width: 300px;
+            text-align: left;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            text-shadow: none;
+            color: #F5F5F5;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            color: #F5F5F5;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #F5F5F5;
+            color: #000;
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid #F5F5F5;
+        }
+
+        .cta-button:hover {
+            background-color: transparent;
+            color: #F5F5F5;
+            border-color: #F5F5F5;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* What We Do Section */
+        .what-we-do {
+            padding: 4rem 2rem;
+            background-color: #000;
+            color: #F5F5F5;
+        }
+
+        .what-we-do .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .what-we-do h2 {
+            font-size: 2.2rem;
+            color: #F5F5F5;
+            margin-bottom: 1.5rem;
+        }
+
+        .what-we-do p {
+            font-size: 1.1rem;
+            color: #CCC;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .features-list li {
+            padding: 0.8rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: #CCC;
+            font-size: 1rem;
+        }
+
+        .features-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #F5F5F5;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .what-we-do-image {
+            text-align: center;
+        }
+
+        .what-we-do-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Countdown Section */
+        .countdown-section {
+            padding: 4rem 2rem;
+            background: #000;
+            color: #F5F5F5;
+        }
+
+        .countdown-section .container {
+            text-align: center;
+        }
+
+        .countdown-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            text-shadow: none;
+            color: #F5F5F5;
+        }
+
+        .countdown-section > .container > p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+            color: #F5F5F5;
+        }
+
+        .countdown-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .countdown-box {
+            background: rgba(245, 245, 245, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            min-width: 280px;
+            border: 1px solid rgba(245, 245, 245, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .countdown-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .countdown-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #F5F5F5;
+        }
+
+        .countdown-number {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: none;
+            color: #F5F5F5;
+        }
+
+        .countdown-label {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            color: #F5F5F5;
+        }
+
+        .session-info {
+            background: rgba(245, 245, 245, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(245, 245, 245, 0.2);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .session-info h3 {
+            color: #F5F5F5;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .session-info p {
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+            color: #F5F5F5;
+        }
+
+        .status {
+            font-weight: bold;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .status.pre-session {
+            background: rgba(255, 193, 7, 0.3);
+            color: #FFD700;
+            border: 1px solid #FFD700;
+        }
+
+        .status.in-session {
+            background: rgba(76, 175, 80, 0.3);
+            color: #A5D6A7;
+            border: 1px solid #A5D6A7;
+        }
+
+        .status.post-session {
+            background: rgba(244, 67, 54, 0.3);
+            color: #EF9A9A;
+            border: 1px solid #EF9A9A;
+        }
+
+        /* Why Maven Section */
+        .why-maven {
+            padding: 4rem 2rem;
+            background-color: #000;
+            color: #F5F5F5;
+        }
+
+        .why-maven h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #F5F5F5;
+            margin-bottom: 3rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .benefit-card {
+            background: #1a1a1a;
+            padding: 2rem;
+            border-radius: 10px;
+            border-left: 4px solid #F5F5F5;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .benefit-card h3 {
+            color: #F5F5F5;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .benefit-card p {
+            color: #CCC;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000;
+            color: #F5F5F5;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        footer h3 {
+            color: #F5F5F5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero .container {
+                flex-direction: column;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .what-we-do .container {
+                grid-template-columns: 1fr;
+            }
+
+            .countdown-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .countdown-number {
+                font-size: 2.2rem;
+            }
+
+            .loading-text {
+                font-size: 1.8rem;
+            }
+
+            .logo-container img {
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Section (scrollable, not fixed) -->
+    <section class="loading-section">
+        <div class="logo-container">
+            <img src="maven-logo.png" alt="Maven Capitol Consulting Logo">
+        </div>
+        <div class="loading-text">
+            <div class="loading-text-content" id="loadingTextContent"></div>
+        </div>
+    </section>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo-text">Maven Capitol Consulting</div>
+            <ul>
+                <li><a href="#what-we-do">What We Do</a></li>
+                <li><a href="#countdown">Session Tracker</a></li>
+                <li><a href="#why">Why Maven</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-logo">
+                <img src="maven-logo.png" alt="Maven Capitol Consulting Logo">
+            </div>
+            <div class="hero-content">
+                <h1>Stay Ahead of Maryland Legislation</h1>
+                <p>Expert economic consulting powered by advanced machine-learning analysis, giving you clear, actionable visibility into the legislation that impacts your business.</p>
+                <a href="#what-we-do" class="cta-button">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- What We Do Section -->
+    <section class="what-we-do" id="what-we-do">
+        <div class="container">
+            <div>
+                <h2>What We Do</h2>
+                <p>We provide expert economic consulting powered by advanced machine-learning analysis, giving you clear, actionable visibility into the legislation that impacts your business.</p>
+
+                <p><strong>Our Core Mission:</strong> Ensure you stay fully informed of every bill introduced or amended in the Maryland General Assembly—so your business is never caught off guard.</p>
+
+                <ul class="features-list">
+                    <li>Real-time bill tracking and analysis</li>
+                    <li>AI-powered legislative intelligence</li>
+                    <li>Impact assessment for your business</li>
+                    <li>Actionable insights and recommendations</li>
+                    <li>Session countdown and timeline tracking</li>
+                    <li>Expert consulting services</li>
+                </ul>
+            </div>
+            <div class="what-we-do-image">
+                <img src="maven-logo.png" alt="Maven Capitol Consulting" style="max-width: 250px; opacity: 0.8;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Session Countdown Section -->
+    <section class="countdown-section" id="countdown">
+        <div class="container">
+            <h2>Maryland General Assembly Session Tracker</h2>
+            <p>Know exactly when the 90-day session begins and ends so you can plan accordingly</p>
+
+            <div class="session-info">
+                <h3>Current Session Information</h3>
+                <p><strong>Session Start:</strong> <span id="sessionStart">-</span></p>
+                <p><strong>Sine Die (Last Day):</strong> <span id="sessionEnd">-</span></p>
+                <p><strong>Session Length:</strong> 90 days</p>
+                <div class="status" id="sessionStatus">Calculating...</div>
+            </div>
+
+            <div class="countdown-container">
+                <div class="countdown-box">
+                    <div class="countdown-title">Days Until Session Starts</div>
+                    <div class="countdown-number" id="daysToStart">-</div>
+                    <div class="countdown-label">days remaining</div>
+                </div>
+
+                <div class="countdown-box">
+                    <div class="countdown-title">Days Until Sine Die</div>
+                    <div class="countdown-number" id="daysToEnd">-</div>
+                    <div class="countdown-label">days remaining</div>
+                </div>
+            </div>
+
+            <p style="opacity: 0.8; margin-top: 2rem;">Last updated: <span id="lastUpdated">-</span></p>
+        </div>
+    </section>
+
+    <!-- Why Maven Section -->
+    <section class="why-maven" id="why">
+        <div class="container">
+            <h2>Why Choose Maven Capitol Consulting?</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <h3>🎯 Precision Targeting</h3>
+                    <p>Our machine-learning algorithms identify bills most relevant to your industry and business model with unmatched accuracy.</p>
+                </div>
+                <div class="benefit-card">
+                    <h3>⚡ Real-Time Updates</h3>
+                    <p>Never miss a critical amendment or new bill introduction. Receive instant notifications about legislation that matters to you.</p>
+                </div>
+                <div class="benefit-card">
+                    <h3>📊 Data-Driven Insights</h3>
+                    <p>Make informed decisions based on comprehensive analysis and clear, actionable recommendations backed by data.</p>
+                </div>
+                <div class="benefit-card">
+                    <h3>🏛️ Capitol Expertise</h3>
+                    <p>Our team understands the Maryland legislative process and can guide you through complex regulatory landscapes.</p>
+                </div>
+                <div class="benefit-card">
+                    <h3>🔐 Confidential Analysis</h3>
+                    <p>Your business intelligence and strategic concerns are handled with the utmost confidentiality and professionalism.</p>
+                </div>
+                <div class="benefit-card">
+                    <h3>🏆 Competitive Advantage</h3>
+                    <p>Stay ahead of competitors by understanding legislative trends and impacts before they become mainstream concerns.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <h3>Maven Capitol Consulting</h3>
+            <p>Expert Legislative Intelligence for Maryland Businesses</p>
+            <p style="margin-top: 1.5rem; opacity: 0.8;">Contact us to learn how we can help your business navigate the Maryland General Assembly</p>
+            <p style="margin-top: 1rem;">&copy; 2024 Maven Capitol Consulting. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Letter-by-letter animation for company name
+        function animateCompanyName() {
+            const text = "Maven Capitol Consulting";
+            const container = document.getElementById('loadingTextContent');
+
+            // Create span for each letter
+            for (let i = 0; i < text.length; i++) {
+                const span = document.createElement('span');
+                span.textContent = text[i];
+                // Calculate delay: each letter starts 80ms after the previous
+                span.style.animationDelay = (i * 0.08) + 's';
+                container.appendChild(span);
+            }
+        }
+
+        // Function to calculate the second Wednesday of January for a given year
+        function getSecondWednesday(year) {
+            const january1 = new Date(year, 0, 1);
+            const dayOfWeek = january1.getDay();
+
+            // Calculate days to first Wednesday (0 = Sunday, 3 = Wednesday)
+            let daysToFirstWed = (3 - dayOfWeek + 7) % 7;
+            if (daysToFirstWed === 0 && january1.getDay() !== 3) {
+                daysToFirstWed = 7;
+            }
+
+            // Add 7 more days to get the second Wednesday
+            const secondWednesday = new Date(year, 0, 1 + daysToFirstWed + 7);
+            return secondWednesday;
+        }
+
+        // Function to add days to a date
+        function addDays(date, days) {
+            const result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        }
+
+        // Function to format date for display
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Function to calculate days between two dates
+        function daysBetween(date1, date2) {
+            const oneDay = 24 * 60 * 60 * 1000;
+            return Math.ceil((date2 - date1) / oneDay);
+        }
+
+        // Main function to update countdown
+        function updateCountdown() {
+            const today = new Date();
+            const currentYear = today.getFullYear();
+
+            // Calculate session dates for current year
+            let sessionStart = getSecondWednesday(currentYear);
+
+            // If we're past this year's session start, calculate for next year
+            if (today > sessionStart) {
+                sessionStart = getSecondWednesday(currentYear + 1);
+            }
+
+            // Calculate sine die (90 days after start)
+            const sessionEnd = addDays(sessionStart, 89);
+
+            // Calculate days remaining
+            const daysToStart = daysBetween(today, sessionStart);
+            const daysToEnd = daysBetween(today, sessionEnd);
+
+            // Update display elements
+            document.getElementById('daysToStart').textContent = Math.max(0, daysToStart);
+            document.getElementById('daysToEnd').textContent = Math.max(0, daysToEnd);
+            document.getElementById('sessionStart').textContent = formatDate(sessionStart);
+            document.getElementById('sessionEnd').textContent = formatDate(sessionEnd);
+            document.getElementById('lastUpdated').textContent = today.toLocaleString();
+
+            // Update session status
+            const statusElement = document.getElementById('sessionStatus');
+            if (today < sessionStart) {
+                statusElement.textContent = 'Pre-Session Period';
+                statusElement.className = 'status pre-session';
+            } else if (today <= sessionEnd) {
+                statusElement.textContent = 'Session In Progress';
+                statusElement.className = 'status in-session';
+            } else {
+                statusElement.textContent = 'Post-Session Period';
+                statusElement.className = 'status post-session';
+            }
+
+            // Handle labels for completed countdowns
+            if (daysToStart <= 0 && today <= sessionEnd) {
+                document.getElementById('daysToStart').textContent = '0';
+                document.querySelector('#daysToStart').parentElement.querySelector('.countdown-label').textContent = 'session in progress!';
+            }
+
+            if (daysToEnd <= 0) {
+                document.getElementById('daysToEnd').textContent = '0';
+                document.querySelector('#daysToEnd').parentElement.querySelector('.countdown-label').textContent = 'session ended!';
+            }
+        }
+
+        // Initialize animations and countdown on page load
+        animateCompanyName();
+        updateCountdown();
+        setInterval(updateCountdown, 60000); // Update every minute
+    </script>
+</body>
+</html>
