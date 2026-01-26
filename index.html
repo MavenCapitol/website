@@ -357,7 +357,6 @@
     footer p { margin-bottom: 0.5rem; }
     footer h3 { color: #000; }
 
-    /* Responsive */
     @media (max-width: 768px) {
       .hero .container { flex-direction: column; }
       .hero h1 { font-size: 2rem; }
@@ -385,7 +384,6 @@
     </div>
   </section>
 
-  <!-- Navigation -->
   <nav>
     <div class="container">
       <div class="logo-text">Maven Capitol Consulting</div>
@@ -398,7 +396,6 @@
     </div>
   </nav>
 
-  <!-- Hero Section -->
   <section class="hero">
     <div class="container">
       <div class="hero-logo">
@@ -415,7 +412,6 @@
     </div>
   </section>
 
-  <!-- What We Do Section -->
   <section class="what-we-do" id="what-we-do">
     <div class="container">
       <div>
@@ -442,22 +438,21 @@
     </div>
   </section>
 
-  <!-- Session Countdown Section -->
   <section class="countdown-section" id="countdown">
     <div class="container">
       <h2>Maryland General Assembly Session Tracker</h2>
       <p>Know exactly when the 90-day session begins and ends so you can plan accordingly</p>
 
-      <!-- Maryland Counties Map (Leaflet + TopoJSON at repo root) -->
       <div class="map-container">
         <div id="viewDiv"></div>
       </div>
 
-      <p style="opacity: 0.8; margin-top: 2rem;">Last updated: <span id="lastUpdated">-</span></p>
+      <p style="opacity: 0.8; margin-top: 2rem;">
+        Last updated: <span id="lastUpdated">-</span>
+      </p>
     </div>
   </section>
 
-  <!-- Why Maven Section -->
   <section class="why-maven" id="why">
     <div class="container">
       <h2>Why Choose Maven Capitol Consulting?</h2>
@@ -490,7 +485,6 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer id="contact">
     <div class="container">
       <h3>Maven Capitol Consulting</h3>
@@ -501,9 +495,6 @@
   </footer>
 
   <script>
-    /***********************
-     * Loading text animation
-     ***********************/
     function animateCompanyName() {
       const text = "Maven Capitol Consulting";
       const container = document.getElementById("loadingTextContent");
@@ -518,11 +509,6 @@
       }
     }
 
-    /***********************
-     * Leaflet map (NO AUTH)
-     * - Custom domain => fetch from site root using leading "/"
-     * - Your TopoJSON file is at repo root: /mdMap.json
-     ***********************/
     function initCountyMap() {
       const map = L.map("viewDiv", { scrollWheelZoom: false }).setView([39.0, -76.8], 8);
 
@@ -530,30 +516,28 @@
         attribution: "© OpenStreetMap"
       }).addTo(map);
 
-      const TOPOJSON_PATH = "/mdMap.json"; // custom domain + repo root
+      // IMPORTANT:
+      // With a custom domain, you still fetch from site root with a leading "/".
+      // Put mdMap.json in the PUBLISHED folder (repo root if Pages uses /(root)).
+      const TOPOJSON_PATH = "/mdMap.json";
 
-      fetch(TOPOJSON_PATH, { cache: "force-cache" })
+      fetch(TOPOJSON_PATH, { cache: "no-cache" })
         .then(r => {
-          if (!r.ok) throw new Error(`TopoJSON fetch failed (${r.status}) from ${TOPOJSON_PATH}`);
+          if (!r.ok) throw new Error(`TopoJSON fetch failed (${r.status}) from ${location.origin}${TOPOJSON_PATH}`);
           return r.json();
         })
         .then(topo => {
           if (!topo || topo.type !== "Topology" || !topo.objects) {
-            throw new Error("File loaded, but it doesn't look like TopoJSON (type: Topology).");
+            throw new Error("Loaded file, but it doesn't look like TopoJSON (expected { type: 'Topology', objects: {...} }).");
           }
 
-          // Use the first object in topo.objects (works even if it's named differently in mapshaper)
           const firstKey = Object.keys(topo.objects)[0];
           if (!firstKey) throw new Error("TopoJSON has no objects to render.");
 
           const geo = topojson.feature(topo, topo.objects[firstKey]);
 
           const layer = L.geoJSON(geo, {
-            style: {
-              color: "#000",
-              weight: 1.5,
-              fillOpacity: 0.25
-            },
+            style: { color: "#000", weight: 1.5, fillOpacity: 0.25 },
             onEachFeature: (feature, lyr) => {
               const props = (feature && feature.properties) ? feature.properties : {};
               const name = props.NAME || props.name || props.COUNTY || props.county || "County";
@@ -561,89 +545,22 @@
             }
           }).addTo(map);
 
-          // Fit to bounds
-          try {
-            map.fitBounds(layer.getBounds(), { padding: [20, 20] });
-          } catch (e) {}
+          map.fitBounds(layer.getBounds(), { padding: [20, 20] });
 
-          // Stamp last updated
           const lastUpdated = document.getElementById("lastUpdated");
           if (lastUpdated) lastUpdated.textContent = new Date().toLocaleString();
         })
         .catch(err => {
           console.error(err);
           const lastUpdated = document.getElementById("lastUpdated");
-          if (lastUpdated) lastUpdated.textContent = "Map failed to load (check /mdMap.json).";
+          if (lastUpdated) lastUpdated.textContent = `Map failed to load: ${location.origin}${TOPOJSON_PATH}`;
         });
     }
 
-    /***********************
-     * Countdown (kept, but safe if missing DOM IDs)
-     ***********************/
-    function getSecondWednesday(year) {
-      const january1 = new Date(year, 0, 1);
-      const dayOfWeek = january1.getDay();
-      const daysToFirstWed = (3 - dayOfWeek + 7) % 7;
-      return new Date(year, 0, 1 + daysToFirstWed + 7);
-    }
-
-    function formatDate(date) {
-      return date.toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      });
-    }
-
-    function daysBetween(date1, date2) {
-      const oneDay = 24 * 60 * 60 * 1000;
-      return Math.ceil((date2 - date1) / oneDay);
-    }
-
-    function updateCountdown() {
-      const today = new Date();
-      const sessionStart = getSecondWednesday(2026);
-      const sessionEnd = new Date(2026, 3, 12); // April 12, 2026
-
-      const lastUpdated = document.getElementById("lastUpdated");
-      if (lastUpdated) lastUpdated.textContent = today.toLocaleString();
-
-      // If you add these IDs back later, this will start populating them.
-      const daysToEnd = daysBetween(today, sessionEnd);
-
-      const elSessionStart = document.getElementById("sessionStart");
-      const elSessionEnd = document.getElementById("sessionEnd");
-      const elDaysToEnd = document.getElementById("daysToEnd");
-      const elDaysToStart = document.getElementById("daysToStart");
-      const elStatus = document.getElementById("sessionStatus");
-
-      if (elSessionStart) elSessionStart.textContent = formatDate(sessionStart);
-      if (elSessionEnd) elSessionEnd.textContent = formatDate(sessionEnd);
-      if (elDaysToEnd) elDaysToEnd.textContent = Math.max(0, daysToEnd);
-      if (elDaysToStart) elDaysToStart.textContent = "-";
-
-      if (elStatus) {
-        if (today <= sessionEnd) {
-          elStatus.textContent = "Session In Progress";
-          elStatus.className = "status in-session";
-        } else {
-          elStatus.textContent = "Post-Session Period";
-          elStatus.className = "status post-session";
-        }
-      }
-    }
-
-    /***********************
-     * Boot
-     ***********************/
     document.addEventListener("DOMContentLoaded", () => {
       animateCompanyName();
       initCountyMap();
-      updateCountdown();
-      setInterval(updateCountdown, 60000);
     });
   </script>
 </body>
 </html>
-
