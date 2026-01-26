@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maven Capitol Consulting - Maryland Legislative Intelligence</title>
     <link href="https://fonts.googleapis.com/css2?family=Mirador&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://js.arcgis.com/4.28/esri/themes/light/main.css">
-    <script src="https://js.arcgis.com/4.28/"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         * {
             margin: 0;
@@ -633,64 +633,60 @@
     </footer>
 
     <script>
-        // Initialize ArcGIS Map
-        require([
-            "esri/Map",
-            "esri/views/MapView",
-            "esri/layers/FeatureLayer"
-        ], function(Map, MapView, FeatureLayer) {
+        // Initialize Leaflet Map with Maryland Counties
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create map
+            const map = L.map('viewDiv').setView([39.0, -76.8], 7);
 
-            const map = new Map({
-                basemap: "gray-vector"
-            });
+            // Add terrain tile layer
+            L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                maxZoom: 17,
+                attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap'
+            }).addTo(map);
 
-            const view = new MapView({
-                container: "viewDiv",
-                map: map,
-                center: [-76.8, 39.0],
-                zoom: 7
-            });
+            // Fetch Maryland counties GeoJSON
+            fetch('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json')
+                .then(response => response.json())
+                .then(data => {
+                    // Filter for Maryland counties (FIPS codes starting with 24)
+                    const marylandCounties = {
+                        type: 'FeatureCollection',
+                        features: data.features.filter(feature =>
+                            feature.id && feature.id.toString().startsWith('24')
+                        )
+                    };
 
-            // Maryland Counties Feature Layer
-            const countiesLayer = new FeatureLayer({
-                url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Counties_Generalized/FeatureServer/0",
-                definitionExpression: "STATE_NAME = 'Maryland'",
-                outFields: ["NAME"],
-                renderer: {
-                    type: "simple",
-                    symbol: {
-                        type: "simple-fill",
-                        color: [224, 224, 224, 0.8],
-                        outline: {
-                            color: [0, 0, 0, 1],
-                            width: 1.5
+                    // Add counties to map
+                    L.geoJSON(marylandCounties, {
+                        style: {
+                            fillColor: '#e0e0e0',
+                            weight: 1.5,
+                            opacity: 1,
+                            color: '#000',
+                            fillOpacity: 0.6
+                        },
+                        onEachFeature: function(feature, layer) {
+                            // Hover effect
+                            layer.on({
+                                mouseover: function(e) {
+                                    const layer = e.target;
+                                    layer.setStyle({
+                                        fillColor: '#A8D5E2',
+                                        fillOpacity: 0.8
+                                    });
+                                },
+                                mouseout: function(e) {
+                                    const layer = e.target;
+                                    layer.setStyle({
+                                        fillColor: '#e0e0e0',
+                                        fillOpacity: 0.6
+                                    });
+                                }
+                            });
                         }
-                    }
-                },
-                popupTemplate: {
-                    title: "{NAME} County",
-                    content: "{NAME} County, Maryland"
-                }
-            });
-
-            // Highlight on hover
-            view.whenLayerView(countiesLayer).then(function(layerView) {
-                let highlight;
-                view.on("pointer-move", function(event) {
-                    view.hitTest(event).then(function(response) {
-                        if (highlight) {
-                            highlight.remove();
-                            highlight = null;
-                        }
-                        if (response.results.length) {
-                            const graphic = response.results[0].graphic;
-                            highlight = layerView.highlight(graphic);
-                        }
-                    });
-                });
-            });
-
-            map.add(countiesLayer);
+                    }).addTo(map);
+                })
+                .catch(error => console.error('Error loading GeoJSON:', error));
         });
 
         // Letter-by-letter animation for company name
