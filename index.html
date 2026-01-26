@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maven Capitol Consulting - Maryland Legislative Intelligence</title>
     <link href="https://fonts.googleapis.com/css2?family=Mirador&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.28/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.28/"></script>
     <style>
         * {
             margin: 0;
@@ -370,31 +372,18 @@
         }
 
         .map-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 2rem auto;
-            padding: 2rem;
+            padding: 0;
             background: rgba(0, 0, 0, 0.05);
             border-radius: 15px;
             border: 1px solid rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
-        .map-container svg {
+        #viewDiv {
+            height: 500px;
             width: 100%;
-            height: auto;
-        }
-
-        .county {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .county:hover {
-            fill: #A8D5E2 !important;
-            opacity: 0.9;
-        }
-
-        .county:hover + text {
-            fill: #000;
         }
 
         .status {
@@ -593,132 +582,7 @@
 
             <!-- Maryland Counties Map -->
             <div class="map-container">
-                <svg viewBox="0 0 1000 450" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Maryland State by County -->
-                    <g id="maryland-map">
-                        <!-- Garrett County (Far Western) -->
-                        <path d="M 50 120 L 90 115 L 95 145 L 85 165 L 60 160 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Garrett"/>
-                        <text x="72" y="140" font-size="11" font-weight="bold" text-anchor="middle">Garrett</text>
-
-                        <!-- Allegany County -->
-                        <path d="M 90 115 L 145 110 L 155 140 L 145 165 L 95 145 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Allegany"/>
-                        <text x="120" y="137" font-size="11" font-weight="bold" text-anchor="middle">Allegany</text>
-
-                        <!-- Washington County -->
-                        <path d="M 145 110 L 210 105 L 230 125 L 225 155 L 155 140 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Washington"/>
-                        <text x="185" y="128" font-size="11" font-weight="bold" text-anchor="middle">Washington</text>
-
-                        <!-- Frederick County -->
-                        <path d="M 210 105 L 285 100 L 295 135 L 285 165 L 225 155 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Frederick"/>
-                        <text x="255" y="130" font-size="11" font-weight="bold" text-anchor="middle">Frederick</text>
-
-                        <!-- Carroll County -->
-                        <path d="M 285 100 L 345 95 L 355 125 L 345 155 L 295 135 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Carroll"/>
-                        <text x="318" y="122" font-size="11" font-weight="bold" text-anchor="middle">Carroll</text>
-
-                        <!-- Baltimore County -->
-                        <path d="M 345 95 L 425 90 L 450 120 L 445 165 L 410 175 L 355 125 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Baltimore"/>
-                        <text x="400" y="130" font-size="11" font-weight="bold" text-anchor="middle">Baltimore</text>
-
-                        <!-- Harford County -->
-                        <path d="M 425 90 L 495 85 L 515 115 L 505 155 L 450 120 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Harford"/>
-                        <text x="475" y="118" font-size="11" font-weight="bold" text-anchor="middle">Harford</text>
-
-                        <!-- Cecil County -->
-                        <path d="M 495 85 L 565 80 L 590 105 L 580 140 L 515 115 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Cecil"/>
-                        <text x="543" y="108" font-size="11" font-weight="bold" text-anchor="middle">Cecil</text>
-
-                        <!-- Kent County -->
-                        <path d="M 565 80 L 635 85 L 645 120 L 630 155 L 580 140 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Kent"/>
-                        <text x="610" y="115" font-size="11" font-weight="bold" text-anchor="middle">Kent</text>
-
-                        <!-- Queen Anne's County -->
-                        <path d="M 630 155 L 645 120 L 710 125 L 720 165 L 685 195 L 630 185 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Queen Anne's"/>
-                        <text x="675" y="155" font-size="10" font-weight="bold" text-anchor="middle">Queen</text>
-                        <text x="675" y="168" font-size="10" font-weight="bold" text-anchor="middle">Anne's</text>
-
-                        <!-- Caroline County -->
-                        <path d="M 685 195 L 720 165 L 775 170 L 780 210 L 730 225 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Caroline"/>
-                        <text x="738" y="195" font-size="11" font-weight="bold" text-anchor="middle">Caroline</text>
-
-                        <!-- Talbot County -->
-                        <path d="M 630 185 L 685 195 L 680 235 L 635 245 L 610 220 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Talbot"/>
-                        <text x="650" y="218" font-size="11" font-weight="bold" text-anchor="middle">Talbot</text>
-
-                        <!-- Dorchester County -->
-                        <path d="M 680 235 L 730 225 L 750 265 L 710 295 L 655 280 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Dorchester"/>
-                        <text x="705" y="260" font-size="10" font-weight="bold" text-anchor="middle">Dorchester</text>
-
-                        <!-- Wicomico County -->
-                        <path d="M 730 225 L 780 210 L 800 250 L 785 285 L 750 265 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Wicomico"/>
-                        <text x="765" y="250" font-size="10" font-weight="bold" text-anchor="middle">Wicomico</text>
-
-                        <!-- Somerset County -->
-                        <path d="M 655 280 L 710 295 L 705 335 L 655 345 L 630 315 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Somerset"/>
-                        <text x="670" y="318" font-size="11" font-weight="bold" text-anchor="middle">Somerset</text>
-
-                        <!-- Worcester County -->
-                        <path d="M 710 295 L 785 285 L 810 325 L 795 365 L 705 335 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Worcester"/>
-                        <text x="755" y="325" font-size="11" font-weight="bold" text-anchor="middle">Worcester</text>
-
-                        <!-- Montgomery County -->
-                        <path d="M 225 155 L 285 165 L 280 210 L 250 235 L 210 220 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Montgomery"/>
-                        <text x="250" y="195" font-size="10" font-weight="bold" text-anchor="middle">Montgomery</text>
-
-                        <!-- Howard County -->
-                        <path d="M 295 135 L 345 155 L 340 195 L 295 210 L 280 210 L 285 165 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Howard"/>
-                        <text x="315" y="180" font-size="11" font-weight="bold" text-anchor="middle">Howard</text>
-
-                        <!-- Anne Arundel County -->
-                        <path d="M 340 195 L 410 175 L 430 210 L 420 255 L 370 265 L 340 245 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Anne Arundel"/>
-                        <text x="380" y="220" font-size="10" font-weight="bold" text-anchor="middle">Anne</text>
-                        <text x="380" y="233" font-size="10" font-weight="bold" text-anchor="middle">Arundel</text>
-
-                        <!-- Prince George's County -->
-                        <path d="M 250 235 L 295 210 L 340 245 L 330 295 L 270 305 L 235 275 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Prince George's"/>
-                        <text x="290" y="260" font-size="10" font-weight="bold" text-anchor="middle">Prince</text>
-                        <text x="290" y="273" font-size="10" font-weight="bold" text-anchor="middle">George's</text>
-
-                        <!-- Calvert County -->
-                        <path d="M 370 265 L 385 290 L 375 340 L 350 350 L 340 320 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Calvert"/>
-                        <text x="365" y="310" font-size="11" font-weight="bold" text-anchor="middle">Calvert</text>
-
-                        <!-- Charles County -->
-                        <path d="M 270 305 L 330 295 L 340 320 L 320 360 L 270 365 L 255 335 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Charles"/>
-                        <text x="300" y="333" font-size="11" font-weight="bold" text-anchor="middle">Charles</text>
-
-                        <!-- St. Mary's County -->
-                        <path d="M 340 320 L 375 340 L 365 385 L 320 390 L 320 360 Z"
-                              fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="St. Mary's"/>
-                        <text x="345" y="360" font-size="10" font-weight="bold" text-anchor="middle">St. Mary's</text>
-
-                        <!-- Baltimore City -->
-                        <circle cx="420" cy="140" r="12" fill="#e0e0e0" stroke="#000" stroke-width="1.5" class="county" data-county="Baltimore City"/>
-                        <text x="420" y="144" font-size="9" font-weight="bold" text-anchor="middle">City</text>
-                    </g>
-                </svg>
+                <div id="viewDiv"></div>
             </div>
 
             <p style="opacity: 0.8; margin-top: 2rem;">Last updated: <span id="lastUpdated">-</span></p>
@@ -769,6 +633,66 @@
     </footer>
 
     <script>
+        // Initialize ArcGIS Map
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/layers/FeatureLayer"
+        ], function(Map, MapView, FeatureLayer) {
+
+            const map = new Map({
+                basemap: "gray-vector"
+            });
+
+            const view = new MapView({
+                container: "viewDiv",
+                map: map,
+                center: [-76.8, 39.0],
+                zoom: 7
+            });
+
+            // Maryland Counties Feature Layer
+            const countiesLayer = new FeatureLayer({
+                url: "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Counties_Generalized/FeatureServer/0",
+                definitionExpression: "STATE_NAME = 'Maryland'",
+                outFields: ["NAME"],
+                renderer: {
+                    type: "simple",
+                    symbol: {
+                        type: "simple-fill",
+                        color: [224, 224, 224, 0.8],
+                        outline: {
+                            color: [0, 0, 0, 1],
+                            width: 1.5
+                        }
+                    }
+                },
+                popupTemplate: {
+                    title: "{NAME} County",
+                    content: "{NAME} County, Maryland"
+                }
+            });
+
+            // Highlight on hover
+            view.whenLayerView(countiesLayer).then(function(layerView) {
+                let highlight;
+                view.on("pointer-move", function(event) {
+                    view.hitTest(event).then(function(response) {
+                        if (highlight) {
+                            highlight.remove();
+                            highlight = null;
+                        }
+                        if (response.results.length) {
+                            const graphic = response.results[0].graphic;
+                            highlight = layerView.highlight(graphic);
+                        }
+                    });
+                });
+            });
+
+            map.add(countiesLayer);
+        });
+
         // Letter-by-letter animation for company name
         function animateCompanyName() {
             const text = "Maven Capitol Consulting";
