@@ -1,792 +1,649 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maven Capitol Consulting - Maryland Legislative Intelligence</title>
-    <link href="https://fonts.googleapis.com/css2?family=Mirador&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #000;
-            background-color: #F5F5F5;
-        }
-
-        /* Loading Screen Section */
-        .loading-section {
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(135deg, #F5F5F5 0%, #FFFFFF 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .background-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0;
-        }
-
-        .logo-container {
-            margin-bottom: 3rem;
-            animation: fadeInLogo 2s ease-in-out forwards;
-            position: relative;
-            z-index: 1;
-        }
-
-        .logo-container img {
-            max-width: 400px;
-            height: auto;
-            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15));
-        }
-
-        @keyframes fadeInLogo {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .loading-text {
-            font-family: 'Mirador', serif;
-            font-size: 2.5rem;
-            font-weight: 400;
-            letter-spacing: 0.15em;
-            text-align: center;
-            color: #000;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-            height: 3.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-transform: uppercase;
-            position: relative;
-            z-index: 1;
-        }
-
-        .loading-text-content {
-            min-height: 1em;
-        }
-
-        .loading-text-content span {
-            opacity: 0;
-            animation: fadeInLetter 0.08s ease-out forwards;
-            display: inline;
-            color: #F5F5F5;
-        }
-
-        @keyframes fadeInLetter {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Navigation */
-        nav {
-            background: #F5F5F5;
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        nav .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        nav .logo-text {
-            color: #000;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 2rem;
-        }
-
-        nav a {
-            color: #000;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: #555;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: #F5F5F5;
-            color: #000;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .hero .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 3rem;
-        }
-
-        .hero-logo {
-            flex: 1;
-            min-width: 250px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .hero-logo img {
-            max-width: 280px;
-            height: auto;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
-        }
-
-        .hero-content {
-            flex: 1;
-            min-width: 300px;
-            text-align: left;
-        }
-
-        .hero h1 {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
-            text-shadow: none;
-            color: #000;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-            color: #000;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: #000;
-            color: #F5F5F5;
-            padding: 0.8rem 2rem;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-            border: 2px solid #000;
-        }
-
-        .cta-button:hover {
-            background-color: transparent;
-            color: #000;
-            border-color: #000;
-        }
-
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        /* What We Do Section */
-        .what-we-do {
-            padding: 4rem 2rem;
-            background-color: #F5F5F5;
-            color: #000;
-        }
-
-        .what-we-do .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .what-we-do h2 {
-            font-size: 2.2rem;
-            color: #000;
-            margin-bottom: 1.5rem;
-        }
-
-        .what-we-do p {
-            font-size: 1.1rem;
-            color: #333;
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-        }
-
-        .features-list {
-            list-style: none;
-            margin-top: 2rem;
-        }
-
-        .features-list li {
-            padding: 0.8rem 0;
-            padding-left: 2rem;
-            position: relative;
-            color: #333;
-            font-size: 1rem;
-        }
-
-        .features-list li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #000;
-            font-weight: bold;
-            font-size: 1.3rem;
-        }
-
-        .what-we-do-image {
-            text-align: center;
-        }
-
-        .what-we-do-image img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Countdown Section */
-        .countdown-section {
-            padding: 4rem 2rem;
-            background: #F5F5F5;
-            color: #000;
-        }
-
-        .countdown-section .container {
-            text-align: center;
-        }
-
-        .countdown-section h2 {
-            font-size: 2.2rem;
-            margin-bottom: 0.5rem;
-            text-shadow: none;
-            color: #000;
-        }
-
-        .countdown-section > .container > p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 3rem;
-            color: #000;
-        }
-
-        .countdown-container {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .countdown-box {
-            background: rgba(0, 0, 0, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 2rem;
-            min-width: 280px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .countdown-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .countdown-title {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            color: #000;
-        }
-
-        .countdown-number {
-            font-size: 2.8rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            text-shadow: none;
-            color: #000;
-        }
-
-        .countdown-label {
-            font-size: 0.95rem;
-            opacity: 0.9;
-            color: #000;
-        }
-
-        .session-info {
-            background: rgba(0, 0, 0, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 2rem;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-
-        .session-info h3 {
-            color: #000;
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-
-        .session-info p {
-            margin-bottom: 0.8rem;
-            font-size: 1rem;
-            color: #000;
-        }
-
-        .map-container {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 0;
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 15px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        #viewDiv {
-            height: 500px;
-            width: 100%;
-        }
-
-        .status {
-            font-weight: bold;
-            padding: 0.6rem 1.2rem;
-            border-radius: 25px;
-            display: inline-block;
-            margin-top: 1rem;
-        }
-
-        .status.pre-session {
-            background: rgba(255, 193, 7, 0.3);
-            color: #B8860B;
-            border: 1px solid #B8860B;
-        }
-
-        .status.in-session {
-            background: rgba(76, 175, 80, 0.3);
-            color: #2E7D32;
-            border: 1px solid #2E7D32;
-        }
-
-        .status.post-session {
-            background: rgba(244, 67, 54, 0.3);
-            color: #C62828;
-            border: 1px solid #C62828;
-        }
-
-        /* Why Maven Section */
-        .why-maven {
-            padding: 4rem 2rem;
-            background-color: #F5F5F5;
-            color: #000;
-        }
-
-        .why-maven h2 {
-            text-align: center;
-            font-size: 2.2rem;
-            color: #000;
-            margin-bottom: 3rem;
-        }
-
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .benefit-card {
-            background: #FFF;
-            padding: 2rem;
-            border-radius: 10px;
-            border-left: 4px solid #000;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .benefit-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .benefit-card h3 {
-            color: #000;
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-
-        .benefit-card p {
-            color: #333;
-            line-height: 1.8;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #F5F5F5;
-            color: #000;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        footer p {
-            margin-bottom: 0.5rem;
-        }
-
-        footer h3 {
-            color: #000;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero .container {
-                flex-direction: column;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .what-we-do .container {
-                grid-template-columns: 1fr;
-            }
-
-            .countdown-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            nav ul {
-                gap: 1rem;
-                font-size: 0.9rem;
-            }
-
-            .countdown-number {
-                font-size: 2.2rem;
-            }
-
-            .loading-text {
-                font-size: 1.8rem;
-            }
-
-            .logo-container img {
-                max-width: 280px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maven Capitol Consulting - Maryland Legislative Intelligence</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Mirador&display=swap" rel="stylesheet">
+
+  <!-- Leaflet (no auth, no API key) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- TopoJSON client (convert TopoJSON -> GeoJSON in browser) -->
+  <script src="https://unpkg.com/topojson-client@3"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #000;
+      background-color: #F5F5F5;
+    }
+
+    /* Loading Screen Section */
+    .loading-section {
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(135deg, #F5F5F5 0%, #FFFFFF 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .background-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .logo-container {
+      margin-bottom: 3rem;
+      animation: fadeInLogo 2s ease-in-out forwards;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-container img {
+      max-width: 400px;
+      height: auto;
+      filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15));
+    }
+
+    @keyframes fadeInLogo {
+      from { opacity: 0; transform: scale(0.9); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .loading-text {
+      font-family: 'Mirador', serif;
+      font-size: 2.5rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-align: center;
+      color: #000;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      height: 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+    }
+
+    .loading-text-content { min-height: 1em; }
+
+    .loading-text-content span {
+      opacity: 0;
+      animation: fadeInLetter 0.08s ease-out forwards;
+      display: inline;
+      color: #F5F5F5;
+    }
+
+    @keyframes fadeInLetter {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* Navigation */
+    nav {
+      background: #F5F5F5;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    nav .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo-text {
+      color: #000;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: #000;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    nav a:hover { color: #555; }
+
+    /* Hero Section */
+    .hero {
+      background: #F5F5F5;
+      color: #000;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .hero .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 3rem;
+    }
+
+    .hero-logo {
+      flex: 1;
+      min-width: 250px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-logo img {
+      max-width: 280px;
+      height: auto;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
+
+    .hero-content {
+      flex: 1;
+      min-width: 300px;
+      text-align: left;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      color: #000;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+      color: #000;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: #000;
+      color: #F5F5F5;
+      padding: 0.8rem 2rem;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s;
+      border: 2px solid #000;
+    }
+
+    .cta-button:hover {
+      background-color: transparent;
+      color: #000;
+      border-color: #000;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* What We Do Section */
+    .what-we-do {
+      padding: 4rem 2rem;
+      background-color: #F5F5F5;
+      color: #000;
+    }
+
+    .what-we-do .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .what-we-do h2 {
+      font-size: 2.2rem;
+      color: #000;
+      margin-bottom: 1.5rem;
+    }
+
+    .what-we-do p {
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+    }
+
+    .features-list { list-style: none; margin-top: 2rem; }
+
+    .features-list li {
+      padding: 0.8rem 0;
+      padding-left: 2rem;
+      position: relative;
+      color: #333;
+      font-size: 1rem;
+    }
+
+    .features-list li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #000;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+
+    .what-we-do-image { text-align: center; }
+
+    .what-we-do-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Countdown Section */
+    .countdown-section {
+      padding: 4rem 2rem;
+      background: #F5F5F5;
+      color: #000;
+    }
+
+    .countdown-section .container { text-align: center; }
+
+    .countdown-section h2 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      color: #000;
+    }
+
+    .countdown-section > .container > p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 3rem;
+      color: #000;
+    }
+
+    .map-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 15px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    #viewDiv {
+      height: 500px;
+      width: 100%;
+    }
+
+    /* Leaflet tweaks */
+    .leaflet-container { background: rgba(0,0,0,0.03); }
+    .leaflet-control-attribution { font-size: 11px; }
+
+    /* Why Maven Section */
+    .why-maven {
+      padding: 4rem 2rem;
+      background-color: #F5F5F5;
+      color: #000;
+    }
+
+    .why-maven h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      color: #000;
+      margin-bottom: 3rem;
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .benefit-card {
+      background: #FFF;
+      padding: 2rem;
+      border-radius: 10px;
+      border-left: 4px solid #000;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .benefit-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .benefit-card h3 {
+      color: #000;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+
+    .benefit-card p { color: #333; line-height: 1.8; }
+
+    /* Footer */
+    footer {
+      background-color: #F5F5F5;
+      color: #000;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    footer p { margin-bottom: 0.5rem; }
+    footer h3 { color: #000; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero .container { flex-direction: column; }
+      .hero h1 { font-size: 2rem; }
+      .what-we-do .container { grid-template-columns: 1fr; }
+      nav ul { gap: 1rem; font-size: 0.9rem; }
+      .loading-text { font-size: 1.8rem; }
+      .logo-container img { max-width: 280px; }
+    }
+  </style>
 </head>
+
 <body>
-    <!-- Loading Section (scrollable, not fixed) -->
-    <section class="loading-section">
-        <video class="background-video" autoplay muted loop playsinline preload="auto" poster="maven-poster.jpg">
-            <source src="https://storage.googleapis.com/mavencapitolwebsiteimages/maven-video.mp4" type="video/mp4">
-        </video>
-        <div class="logo-container">
-            <img src="maven-logo.png" alt="Maven Capitol Consulting Logo">
+  <!-- Loading Section -->
+  <section class="loading-section">
+    <video class="background-video" autoplay muted loop playsinline preload="auto" poster="maven-poster.jpg">
+      <source src="https://storage.googleapis.com/mavencapitolwebsiteimages/maven-video.mp4" type="video/mp4">
+    </video>
+
+    <div class="logo-container">
+      <img src="maven-logo.png" alt="Maven Capitol Consulting Logo">
+    </div>
+
+    <div class="loading-text">
+      <div class="loading-text-content" id="loadingTextContent"></div>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <div class="logo-text">Maven Capitol Consulting</div>
+      <ul>
+        <li><a href="#what-we-do">What We Do</a></li>
+        <li><a href="#countdown">Session Tracker</a></li>
+        <li><a href="#why">Why Maven</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-logo">
+        <img src="maven-logo.png" alt="Maven Capitol Consulting Logo">
+      </div>
+      <div class="hero-content">
+        <h1>Stay Ahead of Maryland Legislation</h1>
+        <p>
+          Expert economic consulting powered by advanced machine-learning analysis, giving you clear,
+          actionable visibility into the legislation that impacts your business.
+        </p>
+        <a href="#what-we-do" class="cta-button">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- What We Do Section -->
+  <section class="what-we-do" id="what-we-do">
+    <div class="container">
+      <div>
+        <h2>What We Do</h2>
+        <p>
+          We provide expert economic consulting powered by advanced machine-learning analysis, giving you clear,
+          actionable visibility into the legislation that impacts your business.
+        </p>
+
+        <p><strong>Our Core Mission:</strong> Ensure you stay fully informed of every bill introduced or amended in the Maryland General Assembly—so your business is never caught off guard.</p>
+
+        <ul class="features-list">
+          <li>Hourly bill tracking and analysis</li>
+          <li>Machine Learning - powered legislative intelligence</li>
+          <li>Impact assessment for your business</li>
+          <li>Actionable insights and recommendations</li>
+          <li>Expert consulting services</li>
+        </ul>
+      </div>
+
+      <div class="what-we-do-image">
+        <img src="maven-logo.png" alt="Maven Capitol Consulting" style="max-width: 250px; opacity: 0.8;">
+      </div>
+    </div>
+  </section>
+
+  <!-- Session Countdown Section -->
+  <section class="countdown-section" id="countdown">
+    <div class="container">
+      <h2>Maryland General Assembly Session Tracker</h2>
+      <p>Know exactly when the 90-day session begins and ends so you can plan accordingly</p>
+
+      <!-- Maryland Counties Map (Leaflet + TopoJSON at repo root) -->
+      <div class="map-container">
+        <div id="viewDiv"></div>
+      </div>
+
+      <p style="opacity: 0.8; margin-top: 2rem;">Last updated: <span id="lastUpdated">-</span></p>
+    </div>
+  </section>
+
+  <!-- Why Maven Section -->
+  <section class="why-maven" id="why">
+    <div class="container">
+      <h2>Why Choose Maven Capitol Consulting?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <h3>🎯 Precision Targeting</h3>
+          <p>Our machine-learning algorithms identify bills most relevant to your industry and business model with unmatched accuracy.</p>
         </div>
-        <div class="loading-text">
-            <div class="loading-text-content" id="loadingTextContent"></div>
+        <div class="benefit-card">
+          <h3>⚡ Hourly Updates</h3>
+          <p>Never miss a critical amendment or new bill introduction. Receive instant notifications about legislation that matters to you.</p>
         </div>
-    </section>
-
-    <!-- Navigation -->
-    <nav>
-        <div class="container">
-            <div class="logo-text">Maven Capitol Consulting</div>
-            <ul>
-                <li><a href="#what-we-do">What We Do</a></li>
-                <li><a href="#countdown">Session Tracker</a></li>
-                <li><a href="#why">Why Maven</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
+        <div class="benefit-card">
+          <h3>📊 Data-Driven Insights</h3>
+          <p>Make informed decisions based on comprehensive analysis and clear, actionable recommendations backed by data.</p>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-logo">
-                <img src="maven-logo.png" alt="Maven Capitol Consulting Logo">
-            </div>
-            <div class="hero-content">
-                <h1>Stay Ahead of Maryland Legislation</h1>
-                <p>Expert economic consulting powered by advanced machine-learning analysis, giving you clear, actionable visibility into the legislation that impacts your business.</p>
-                <a href="#what-we-do" class="cta-button">Learn More</a>
-            </div>
+        <div class="benefit-card">
+          <h3>🏛️ Capitol Expertise</h3>
+          <p>Our team understands the Maryland legislative process and can guide you through complex regulatory landscapes.</p>
         </div>
-    </section>
-
-    <!-- What We Do Section -->
-    <section class="what-we-do" id="what-we-do">
-        <div class="container">
-            <div>
-                <h2>What We Do</h2>
-                <p>We provide expert economic consulting powered by advanced machine-learning analysis, giving you clear, actionable visibility into the legislation that impacts your business.</p>
-
-                <p><strong>Our Core Mission:</strong> Ensure you stay fully informed of every bill introduced or amended in the Maryland General Assembly—so your business is never caught off guard.</p>
-
-                <ul class="features-list">
-                    <li>Hourly bill tracking and analysis</li>
-                    <li>Machine Learning - powered legislative intelligence</li>
-                    <li>Impact assessment for your business</li>
-                    <li>Actionable insights and recommendations</li>
-                    <li>Expert consulting services</li>
-                </ul>
-            </div>
-            <div class="what-we-do-image">
-                <img src="maven-logo.png" alt="Maven Capitol Consulting" style="max-width: 250px; opacity: 0.8;">
-            </div>
+        <div class="benefit-card">
+          <h3>🔐 Confidential Analysis</h3>
+          <p>Your business intelligence and strategic concerns are handled with the utmost confidentiality and professionalism.</p>
         </div>
-    </section>
-
-    <!-- Session Countdown Section -->
-    <section class="countdown-section" id="countdown">
-        <div class="container">
-            <h2>Maryland General Assembly Session Tracker</h2>
-            <p>Know exactly when the 90-day session begins and ends so you can plan accordingly</p>
-
-            <!-- Maryland Counties Map -->
-            <div class="map-container">
-                <div id="viewDiv"></div>
-            </div>
-
-            <p style="opacity: 0.8; margin-top: 2rem;">Last updated: <span id="lastUpdated">-</span></p>
+        <div class="benefit-card">
+          <h3>🏆 Competitive Advantage</h3>
+          <p>Stay ahead of competitors by understanding legislative trends and impacts before they become mainstream concerns.</p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Why Maven Section -->
-    <section class="why-maven" id="why">
-        <div class="container">
-            <h2>Why Choose Maven Capitol Consulting?</h2>
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <h3>🎯 Precision Targeting</h3>
-                    <p>Our machine-learning algorithms identify bills most relevant to your industry and business model with unmatched accuracy.</p>
-                </div>
-                <div class="benefit-card">
-                    <h3>⚡ Hourly Updates</h3>
-                    <p>Never miss a critical amendment or new bill introduction. Receive instant notifications about legislation that matters to you.</p>
-                </div>
-                <div class="benefit-card">
-                    <h3>📊 Data-Driven Insights</h3>
-                    <p>Make informed decisions based on comprehensive analysis and clear, actionable recommendations backed by data.</p>
-                </div>
-                <div class="benefit-card">
-                    <h3>🏛️ Capitol Expertise</h3>
-                    <p>Our team understands the Maryland legislative process and can guide you through complex regulatory landscapes.</p>
-                </div>
-                <div class="benefit-card">
-                    <h3>🔐 Confidential Analysis</h3>
-                    <p>Your business intelligence and strategic concerns are handled with the utmost confidentiality and professionalism.</p>
-                </div>
-                <div class="benefit-card">
-                    <h3>🏆 Competitive Advantage</h3>
-                    <p>Stay ahead of competitors by understanding legislative trends and impacts before they become mainstream concerns.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- Footer -->
+  <footer id="contact">
+    <div class="container">
+      <h3>Maven Capitol Consulting</h3>
+      <p>Expert Legislative Intelligence for Maryland Businesses</p>
+      <p style="margin-top: 1.5rem; opacity: 0.8;">Contact us to learn how we can help your business navigate the Maryland General Assembly</p>
+      <p style="margin-top: 1rem;">&copy; 2026 Maven Capitol Consulting. All rights reserved.</p>
+    </div>
+  </footer>
 
-    <!-- Footer -->
-    <footer id="contact">
-        <div class="container">
-            <h3>Maven Capitol Consulting</h3>
-            <p>Expert Legislative Intelligence for Maryland Businesses</p>
-            <p style="margin-top: 1.5rem; opacity: 0.8;">Contact us to learn how we can help your business navigate the Maryland General Assembly</p>
-            <p style="margin-top: 1rem;">&copy; 2026 Maven Capitol Consulting. All rights reserved.</p>
-        </div>
-    </footer>
+  <script>
+    /***********************
+     * Loading text animation
+     ***********************/
+    function animateCompanyName() {
+      const text = "Maven Capitol Consulting";
+      const container = document.getElementById("loadingTextContent");
+      if (!container) return;
 
-    <script>
-        // Initialize Leaflet Map with Maryland Counties
-        document.addEventListener('DOMContentLoaded', function() {
-            // Create map
-            const map = L.map('viewDiv').setView([39.0, -76.8], 7);
+      container.innerHTML = "";
+      for (let i = 0; i < text.length; i++) {
+        const span = document.createElement("span");
+        span.textContent = text[i];
+        span.style.animationDelay = (i * 0.08) + "s";
+        container.appendChild(span);
+      }
+    }
 
-            // Add terrain tile layer
-            L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                maxZoom: 17,
-                attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap'
-            }).addTo(map);
+    /***********************
+     * Leaflet map (NO AUTH)
+     * - Custom domain => fetch from site root using leading "/"
+     * - Your TopoJSON file is at repo root: /mdMap.json
+     ***********************/
+    function initCountyMap() {
+      const map = L.map("viewDiv", { scrollWheelZoom: false }).setView([39.0, -76.8], 8);
 
-            // Fetch Maryland counties GeoJSON
-            fetch('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json')
-                .then(response => response.json())
-                .then(data => {
-                    // Filter for Maryland counties (FIPS codes starting with 24)
-                    const marylandCounties = {
-                        type: 'FeatureCollection',
-                        features: data.features.filter(feature =>
-                            feature.id && feature.id.toString().startsWith('24')
-                        )
-                    };
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap"
+      }).addTo(map);
 
-                    // Add counties to map
-                    L.geoJSON(marylandCounties, {
-                        style: {
-                            fillColor: '#e0e0e0',
-                            weight: 1.5,
-                            opacity: 1,
-                            color: '#000',
-                            fillOpacity: 0.6
-                        },
-                        onEachFeature: function(feature, layer) {
-                            // Hover effect
-                            layer.on({
-                                mouseover: function(e) {
-                                    const layer = e.target;
-                                    layer.setStyle({
-                                        fillColor: '#A8D5E2',
-                                        fillOpacity: 0.8
-                                    });
-                                },
-                                mouseout: function(e) {
-                                    const layer = e.target;
-                                    layer.setStyle({
-                                        fillColor: '#e0e0e0',
-                                        fillOpacity: 0.6
-                                    });
-                                }
-                            });
-                        }
-                    }).addTo(map);
-                })
-                .catch(error => console.error('Error loading GeoJSON:', error));
+      const TOPOJSON_PATH = "/mdMap.json"; // custom domain + repo root
+
+      fetch(TOPOJSON_PATH, { cache: "force-cache" })
+        .then(r => {
+          if (!r.ok) throw new Error(`TopoJSON fetch failed (${r.status}) from ${TOPOJSON_PATH}`);
+          return r.json();
+        })
+        .then(topo => {
+          if (!topo || topo.type !== "Topology" || !topo.objects) {
+            throw new Error("File loaded, but it doesn't look like TopoJSON (type: Topology).");
+          }
+
+          // Use the first object in topo.objects (works even if it's named differently in mapshaper)
+          const firstKey = Object.keys(topo.objects)[0];
+          if (!firstKey) throw new Error("TopoJSON has no objects to render.");
+
+          const geo = topojson.feature(topo, topo.objects[firstKey]);
+
+          const layer = L.geoJSON(geo, {
+            style: {
+              color: "#000",
+              weight: 1.5,
+              fillOpacity: 0.25
+            },
+            onEachFeature: (feature, lyr) => {
+              const props = (feature && feature.properties) ? feature.properties : {};
+              const name = props.NAME || props.name || props.COUNTY || props.county || "County";
+              lyr.bindTooltip(name, { sticky: true });
+            }
+          }).addTo(map);
+
+          // Fit to bounds
+          try {
+            map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+          } catch (e) {}
+
+          // Stamp last updated
+          const lastUpdated = document.getElementById("lastUpdated");
+          if (lastUpdated) lastUpdated.textContent = new Date().toLocaleString();
+        })
+        .catch(err => {
+          console.error(err);
+          const lastUpdated = document.getElementById("lastUpdated");
+          if (lastUpdated) lastUpdated.textContent = "Map failed to load (check /mdMap.json).";
         });
+    }
 
-        // Letter-by-letter animation for company name
-        function animateCompanyName() {
-            const text = "Maven Capitol Consulting";
-            const container = document.getElementById('loadingTextContent');
+    /***********************
+     * Countdown (kept, but safe if missing DOM IDs)
+     ***********************/
+    function getSecondWednesday(year) {
+      const january1 = new Date(year, 0, 1);
+      const dayOfWeek = january1.getDay();
+      const daysToFirstWed = (3 - dayOfWeek + 7) % 7;
+      return new Date(year, 0, 1 + daysToFirstWed + 7);
+    }
 
-            // Create span for each letter
-            for (let i = 0; i < text.length; i++) {
-                const span = document.createElement('span');
-                span.textContent = text[i];
-                // Calculate delay: each letter starts 80ms after the previous
-                span.style.animationDelay = (i * 0.08) + 's';
-                container.appendChild(span);
-            }
+    function formatDate(date) {
+      return date.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
+
+    function daysBetween(date1, date2) {
+      const oneDay = 24 * 60 * 60 * 1000;
+      return Math.ceil((date2 - date1) / oneDay);
+    }
+
+    function updateCountdown() {
+      const today = new Date();
+      const sessionStart = getSecondWednesday(2026);
+      const sessionEnd = new Date(2026, 3, 12); // April 12, 2026
+
+      const lastUpdated = document.getElementById("lastUpdated");
+      if (lastUpdated) lastUpdated.textContent = today.toLocaleString();
+
+      // If you add these IDs back later, this will start populating them.
+      const daysToEnd = daysBetween(today, sessionEnd);
+
+      const elSessionStart = document.getElementById("sessionStart");
+      const elSessionEnd = document.getElementById("sessionEnd");
+      const elDaysToEnd = document.getElementById("daysToEnd");
+      const elDaysToStart = document.getElementById("daysToStart");
+      const elStatus = document.getElementById("sessionStatus");
+
+      if (elSessionStart) elSessionStart.textContent = formatDate(sessionStart);
+      if (elSessionEnd) elSessionEnd.textContent = formatDate(sessionEnd);
+      if (elDaysToEnd) elDaysToEnd.textContent = Math.max(0, daysToEnd);
+      if (elDaysToStart) elDaysToStart.textContent = "-";
+
+      if (elStatus) {
+        if (today <= sessionEnd) {
+          elStatus.textContent = "Session In Progress";
+          elStatus.className = "status in-session";
+        } else {
+          elStatus.textContent = "Post-Session Period";
+          elStatus.className = "status post-session";
         }
+      }
+    }
 
-        // Function to calculate the second Wednesday of January for a given year
-        function getSecondWednesday(year) {
-            const january1 = new Date(year, 0, 1);
-            const dayOfWeek = january1.getDay();
-
-            // Calculate days to first Wednesday (0 = Sunday, 3 = Wednesday)
-            let daysToFirstWed = (3 - dayOfWeek + 7) % 7;
-            if (daysToFirstWed === 0 && january1.getDay() !== 3) {
-                daysToFirstWed = 7;
-            }
-
-            // Add 7 more days to get the second Wednesday
-            const secondWednesday = new Date(year, 0, 1 + daysToFirstWed + 7);
-            return secondWednesday;
-        }
-
-        // Function to add days to a date
-        function addDays(date, days) {
-            const result = new Date(date);
-            result.setDate(result.getDate() + days);
-            return result;
-        }
-
-        // Function to format date for display
-        function formatDate(date) {
-            return date.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        }
-
-        // Function to calculate days between two dates
-        function daysBetween(date1, date2) {
-            const oneDay = 24 * 60 * 60 * 1000;
-            return Math.ceil((date2 - date1) / oneDay);
-        }
-
-        // Main function to update countdown
-        function updateCountdown() {
-            const today = new Date();
-
-            // Session is currently active
-            const sessionStart = getSecondWednesday(2026);
-
-            // Sine die is Monday, April 12, 2026
-            const sessionEnd = new Date(2026, 3, 12); // Month is 0-indexed, so 3 = April
-
-            // Calculate days remaining to sine die
-            const daysToEnd = daysBetween(today, sessionEnd);
-
-            // Update display elements
-            document.getElementById('daysToStart').textContent = '-';
-            document.getElementById('daysToEnd').textContent = Math.max(0, daysToEnd);
-            document.getElementById('sessionStart').textContent = formatDate(sessionStart);
-            document.getElementById('sessionEnd').textContent = formatDate(sessionEnd);
-            document.getElementById('lastUpdated').textContent = today.toLocaleString();
-
-            // Update session status (session is currently active)
-            const statusElement = document.getElementById('sessionStatus');
-            if (today <= sessionEnd) {
-                statusElement.textContent = 'Session In Progress';
-                statusElement.className = 'status in-session';
-            } else {
-                statusElement.textContent = 'Post-Session Period';
-                statusElement.className = 'status post-session';
-            }
-
-            // Update label for days to start
-            document.querySelector('#daysToStart').parentElement.querySelector('.countdown-label').textContent = 'session in progress!';
-
-            // Handle label for days to end
-            if (daysToEnd <= 0) {
-                document.getElementById('daysToEnd').textContent = '0';
-                document.querySelector('#daysToEnd').parentElement.querySelector('.countdown-label').textContent = 'session ended!';
-            }
-        }
-
-        // Initialize animations and countdown on page load
-        animateCompanyName();
-        updateCountdown();
-        setInterval(updateCountdown, 60000); // Update every minute
-    </script>
+    /***********************
+     * Boot
+     ***********************/
+    document.addEventListener("DOMContentLoaded", () => {
+      animateCompanyName();
+      initCountyMap();
+      updateCountdown();
+      setInterval(updateCountdown, 60000);
+    });
+  </script>
 </body>
 </html>
+
