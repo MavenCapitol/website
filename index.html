@@ -72,7 +72,7 @@
             font-weight: 400;
             letter-spacing: 0.15em;
             text-align: center;
-            color: #F5F5F5;
+            color: #000;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
             height: 3.5rem;
             display: flex;
@@ -690,36 +690,26 @@
         // Main function to update countdown
         function updateCountdown() {
             const today = new Date();
-            const currentYear = today.getFullYear();
 
-            // Calculate session dates for current year
-            let sessionStart = getSecondWednesday(currentYear);
+            // Session is currently active
+            const sessionStart = getSecondWednesday(2026);
 
-            // If we're past this year's session start, calculate for next year
-            if (today > sessionStart) {
-                sessionStart = getSecondWednesday(currentYear + 1);
-            }
+            // Sine die is Monday, April 12, 2026
+            const sessionEnd = new Date(2026, 3, 12); // Month is 0-indexed, so 3 = April
 
-            // Calculate sine die (90 days after start)
-            const sessionEnd = addDays(sessionStart, 89);
-
-            // Calculate days remaining
-            const daysToStart = daysBetween(today, sessionStart);
+            // Calculate days remaining to sine die
             const daysToEnd = daysBetween(today, sessionEnd);
 
             // Update display elements
-            document.getElementById('daysToStart').textContent = Math.max(0, daysToStart);
+            document.getElementById('daysToStart').textContent = '-';
             document.getElementById('daysToEnd').textContent = Math.max(0, daysToEnd);
             document.getElementById('sessionStart').textContent = formatDate(sessionStart);
             document.getElementById('sessionEnd').textContent = formatDate(sessionEnd);
             document.getElementById('lastUpdated').textContent = today.toLocaleString();
 
-            // Update session status
+            // Update session status (session is currently active)
             const statusElement = document.getElementById('sessionStatus');
-            if (today < sessionStart) {
-                statusElement.textContent = 'Pre-Session Period';
-                statusElement.className = 'status pre-session';
-            } else if (today <= sessionEnd) {
+            if (today <= sessionEnd) {
                 statusElement.textContent = 'Session In Progress';
                 statusElement.className = 'status in-session';
             } else {
@@ -727,12 +717,10 @@
                 statusElement.className = 'status post-session';
             }
 
-            // Handle labels for completed countdowns
-            if (daysToStart <= 0 && today <= sessionEnd) {
-                document.getElementById('daysToStart').textContent = '0';
-                document.querySelector('#daysToStart').parentElement.querySelector('.countdown-label').textContent = 'session in progress!';
-            }
+            // Update label for days to start
+            document.querySelector('#daysToStart').parentElement.querySelector('.countdown-label').textContent = 'session in progress!';
 
+            // Handle label for days to end
             if (daysToEnd <= 0) {
                 document.getElementById('daysToEnd').textContent = '0';
                 document.querySelector('#daysToEnd').parentElement.querySelector('.countdown-label').textContent = 'session ended!';
