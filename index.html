@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maven Capitol Consulting - Maryland Legislative Intelligence</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Mirador&display=swap" rel="stylesheet">
+
+  <!-- Leaflet (no auth) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- TopoJSON client -->
+  <script src="https://unpkg.com/topojson-client@3"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #F5F5F5;
+      color: #000;
+      line-height: 1.6;
+    }
+
+    /* Loading Section */
+    .loading-section {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #F5F5F5;
+      overflow: hidden;
+    }
+
+    .background-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .logo-container {
+      z-index: 1;
+      margin-bottom: 2rem;
+    }
+
+    .logo-container img {
+      max-width: 380px;
+    }
+
+    .loading-text {
+      z-index: 1;
+      font-family: 'Mirador', serif;
+      font-size: 2.4rem;
+      letter-spacing: 0.15em;
+      color: #F5F5F5;
+    }
+
+    nav {
+      background: #F5F5F5;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    nav .container {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    .hero, .what-we-do, .countdown-section, .why-maven {
+      padding: 4rem 2rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .map-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(0,0,0,0.05);
+    }
+
+    #viewDiv {
+      width: 100%;
+      height: 500px;
+    }
+
+    footer {
+      padding: 2rem;
+      text-align: center;
+      background: #F5F5F5;
+    }
+
+    .leaflet-container {
+      background: rgba(0,0,0,0.03);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- =========================
+     INLINE TOPOJSON (NO FETCH)
+     ========================= -->
+<script id="md-topo" type="application/json">
+
+</script>
+
+<!-- Loading -->
+<section class="loading-section">
+  <video class="background-video" autoplay muted loop playsinline>
+    <source src="https://storage.googleapis.com/mavencapitolwebsiteimages/maven-video.mp4" type="video/mp4">
+  </video>
+
+  <div class="logo-container">
+    <img src="maven-logo.png" alt="Maven Capitol Consulting Logo">
+  </div>
+
+  <div class="loading-text">MAVEN CAPITOL CONSULTING</div>
+</section>
+
+<!-- Navigation -->
+<nav>
+  <div class="container">
+    <strong>Maven Capitol Consulting</strong>
+    <ul>
+      <li><a href="#what">What We Do</a></li>
+      <li><a href="#map">Session Tracker</a></li>
+      <li><a href="#why">Why Maven</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- What We Do -->
+<section class="what-we-do" id="what">
+  <div class="container">
+    <h2>What We Do</h2>
+    <p>
+      Advanced legislative intelligence for Maryland businesses using
+      machine-learning driven analysis and expert consulting.
+    </p>
+  </div>
+</section>
+
+<!-- Map Section -->
+<section class="countdown-section" id="map">
+  <div class="container">
+    <h2>Maryland General Assembly Coverage</h2>
+
+    <div class="map-container">
+      <div id="viewDiv"></div>
+    </div>
+
+    <p style="margin-top:1rem; opacity:0.8;">
+      Last updated: <span id="lastUpdated">—</span>
+    </p>
+  </div>
+</section>
+
+<!-- Why Maven -->
+<section class="why-maven" id="why">
+  <div class="container">
+    <h2>Why Maven Capitol Consulting?</h2>
+    <p>Precision, speed, and legislative expertise.</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2026 Maven Capitol Consulting. All rights reserved.</p>
+</footer>
+
+<!-- =========================
+     MAP INITIALIZATION
+     ========================= -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const map = L.map("viewDiv", { scrollWheelZoom: false })
+      .setView([39.0, -76.8], 8);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap"
+    }).addTo(map);
+
+    // Parse inline TopoJSON
+    const topoText = document.getElementById("md-topo").textContent.trim();
+    const topo = JSON.parse(topoText);
+
+    const objectKey = Object.keys(topo.objects)[0];
+    const geo = topojson.feature(topo, topo.objects[objectKey]);
+
+    const layer = L.geoJSON(geo, {
+      style: {
+        color: "#000",
+        weight: 1.5,
+        fillOpacity: 0.25
+      },
+      onEachFeature: (feature, lyr) => {
+        const name =
+          feature?.properties?.NAME ||
+          feature?.properties?.name ||
+          "County";
+        lyr.bindTooltip(name, { sticky: true });
+      }
+    }).addTo(map);
+
+    map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+
+    document.getElementById("lastUpdated").textContent =
+      new Date().toLocaleString();
+  });
+</script>
+
+</body>
+</html>
