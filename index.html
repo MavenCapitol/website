@@ -8,12 +8,6 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Mirador&display=swap" rel="stylesheet">
 
-  <!-- Leaflet (no auth) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- TopoJSON client -->
-  <script src="https://unpkg.com/topojson-client@3"></script>
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -202,8 +196,9 @@
     const map = L.map("viewDiv", { scrollWheelZoom: false })
       .setView([39.0, -76.8], 8);
 
-    L.tileLayer({
-      attribution: "MD iMAP – State of Maryland – opendata.maryland.gov"
+    L.tileLayer("https://geodata.md.gov/imap/services/Imagery/MD_SixInchImagery/MapServer/tile/{z}/{y}/{x}", {
+      attribution: '&copy; <a href="https://imap.maryland.gov/">MD iMAP</a> | <a href="https://opendata.maryland.gov/">State of Maryland</a>',
+      maxZoom: 20
     }).addTo(map);
 
     // Fetch external TopoJSON
