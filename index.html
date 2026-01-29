@@ -128,12 +128,6 @@
 
 <body>
 
-<!-- =========================
-     INLINE TOPOJSON (NO FETCH)
-     ========================= -->
-<script id="md-topo" type="application/json">
-
-</script>
 
 <!-- Loading -->
 <section class="loading-section">
@@ -203,7 +197,7 @@
      MAP INITIALIZATION
      ========================= -->
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
 
     const map = L.map("viewDiv", { scrollWheelZoom: false })
       .setView([39.0, -76.8], 8);
@@ -212,9 +206,9 @@
       attribution: "© OpenStreetMap"
     }).addTo(map);
 
-    // Parse inline TopoJSON
-    const topoText = document.getElementById("md-topo").textContent.trim();
-    const topo = JSON.parse(topoText);
+    // Fetch external TopoJSON
+    const response = await fetch("MarylandGovMap.json");
+    const topo = await response.json();
 
     const objectKey = Object.keys(topo.objects)[0];
     const geo = topojson.feature(topo, topo.objects[objectKey]);
