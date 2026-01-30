@@ -159,7 +159,6 @@
 
 <body>
 
-
 <!-- Loading -->
 <section class="loading-section">
   <video class="background-video" autoplay muted loop playsinline>
@@ -202,7 +201,7 @@
   <div class="container">
     <h2>Most Common MGA Topics (2024 Session)</h2>
     <p style="margin-top:0.5rem; opacity:0.8;">
-      Bubble size reflects the number of bills where the <strong>first MGA topic</strong> appears first in <code>mga_topic</code>.
+      Bubble size reflects the number of bills corresponding to the <strong>primary MGA topic</strong>.
       Hover to view topic labels.
     </p>
 
@@ -241,7 +240,7 @@
 </footer>
 
 <!-- =========================
-     MAP INITIALIZATION
+     MAP + BUBBLES INITIALIZATION
      ========================= -->
 <script>
   document.addEventListener("DOMContentLoaded", async () => {
@@ -334,10 +333,13 @@
          BUBBLE CHART (MGA TOPICS)
          ========================= */
 
+      // Tooltip (one per page). Remove any existing tooltip to avoid duplicates on hot reload.
+      d3.selectAll(".bubble-tooltip").remove();
       const tooltip = d3.select("body")
         .append("div")
         .attr("class", "bubble-tooltip");
 
+      // Load CSV (must be hosted in same repo)
       const rows = await d3.csv("MD_2024_MavenULTRA.csv", d => ({
         bill_id: d.bill_id,
         state: (d.state || "").trim(),
@@ -345,21 +347,24 @@
         mga_topic: (d.mga_topic || "").trim()
       }));
 
-      const md2024 = rows.filter(
-        r => r.state === "MD" && r.year === 2024 && r.mga_topic
+      const md2024 = rows.filter(r =>
+        r.state === "MD" && r.year === 2024 && r.mga_topic
       );
 
+      // First MGA topic (before the first semicolon)
       const firstTopic = (s) => {
-        const t = s.split(";")[0].trim();
+        const t = (s || "").split(";")[0].trim();
         return t.length ? t : "Unknown";
       };
 
+      // Count frequencies
       const counts = d3.rollup(
         md2024,
         v => v.length,
         r => firstTopic(r.mga_topic)
       );
 
+      // Convert to array, sort, and take top N
       const data = Array.from(counts, ([topic, value]) => ({ topic, value }))
         .sort((a, b) => d3.descending(b.value, a.value))
         .slice(0, 35);
@@ -368,6 +373,7 @@
       const width = container.clientWidth || 900;
       const height = container.clientHeight || 560;
 
+      // Clear if re-rendering
       d3.select("#bubbleChart").selectAll("*").remove();
 
       const svg = d3.select("#bubbleChart")
@@ -385,20 +391,28 @@
 
       const nodes = pack(root).leaves();
 
-      // Bright, professional categorical palette
+      // ---- IMPORTANT COLOR FIX ----
+      // Your circles looked gray because either:
+      // (a) an overriding CSS/opacity was washing them out, or
+      // (b) some topics weren't getting mapped (falling back to default styling).
+      // This guarantees a vivid color for EVERY topic and full visibility.
+
+      // Bright, vivid palette (high-chroma)
       const palette = [
-        "#4E79A7", "#F28E2B", "#E15759", "#76B7B2",
-        "#59A14F", "#EDC948", "#B07AA1", "#FF9DA7",
-        "#9C755F", "#BAB0AC", "#1F77B4", "#FF7F0E",
-        "#2CA02C", "#D62728", "#9467BD", "#8C564B",
-        "#E377C2", "#7F7F7F", "#BCBD22", "#17BECF"
+        "#ff3b30", "#ff9500", "#ffcc00", "#34c759",
+        "#00c7be", "#007aff", "#5856d6", "#af52de",
+        "#ff2d55", "#a2845e", "#64d2ff", "#30d158",
+        "#ffd60a", "#ff6b6b", "#4dd0e1", "#5e5ce6",
+        "#bf5af2", "#ff9f0a", "#32d74b", "#0a84ff",
+        "#ff375f", "#8e8e93", "#00bcd4", "#9c27b0"
       ];
 
-      // Stable topic → color mapping
+      // Stable mapping: topic -> palette index (no missing colors)
       const colorScale = d3.scaleOrdinal()
         .domain(data.map(d => d.topic))
-        .range(palette.concat(palette)); // safe if > palette length
+        .range(palette);
 
+      // Group container
       const g = svg.append("g");
 
       const node = g.selectAll("g")
@@ -407,44 +421,38 @@
         .append("g")
         .attr("transform", d => `translate(${d.x},${d.y})`);
 
-         node.append("circle")
+      node.append("circle")
         .attr("r", d => d.r)
         .attr("fill", d => colorScale(d.data.topic))
-        .attr("fill-opacity", 0.75)
-        .attr("stroke", "#ffffff")
+        .attr("fill-opacity", 0.95)                 // make sure color is vivid
+        .attr("stroke", "rgba(255,255,255,0.95)")   // crisp separation
         .attr("stroke-width", 2)
-        .style("filter", "drop-shadow(0px 6px 14px rgba(0,0,0,0.18))")
+        .style("filter", "drop-shadow(0px 8px 18px rgba(0,0,0,0.20))")
         .on("mousemove", (event, d) => {
-          d3.select(event.currentTarget)
-            .transition()
-            .duration(150)
-            .attr("transform", "scale(1.05)");
-
           tooltip
             .style("left", (event.pageX + 12) + "px")
             .style("top", (event.pageY - 20) + "px")
             .style("opacity", 1)
             .style("transform", "translateY(0px)")
-            .html(
-              `<strong>${d.data.topic}</strong><br/>Bills: ${d.data.value}`
-            );
-          })
-          .on("mouseout", (event) => {
-            d3.select(event.currentTarget)
-              .transition()
-              .duration(150)
-              .attr("transform", "scale(1)");
+            .html(`<strong>${d.data.topic}</strong><br/>Bills: ${d.data.value}`);
+        })
+        .on("mouseout", () => {
+          tooltip
+            .style("opacity", 0)
+            .style("transform", "translateY(6px)");
+        });
 
-            tooltip
-              .style("opacity", 0)
-              .style("transform", "translateY(6px)");
-          });
-
+      // Labels (only for larger bubbles)
       node.append("text")
         .attr("text-anchor", "middle")
         .style("font-family", "Segoe UI, Tahoma, Geneva, Verdana, sans-serif")
+        .style("font-weight", "600")
+        .style("fill", "rgba(0,0,0,0.85)")
+        .style("paint-order", "stroke")
+        .style("stroke", "rgba(255,255,255,0.85)")
+        .style("stroke-width", "3px")
         .style("font-size", d => `${Math.max(10, Math.min(16, d.r / 3))}px`)
-        .style("opacity", d => (d.r > 32 ? 0.9 : 0))
+        .style("opacity", d => (d.r > 34 ? 0.95 : 0))
         .text(d => {
           const s = d.data.topic;
           return s.length > 28 ? s.slice(0, 28) + "…" : s;
@@ -459,7 +467,6 @@
     }
   });
 </script>
-
 
 </body>
 </html>
