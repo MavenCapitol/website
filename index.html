@@ -12,6 +12,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- D3 (for bubble chart) -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -121,6 +124,36 @@
       background: #F5F5F5;
     }
 
+    /* ===== Bubble chart ===== */
+    .bubble-wrap{
+      max-width: 1000px;
+      margin: 2rem auto 0 auto;
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(0,0,0,0.03);
+      padding: 1rem;
+    }
+
+    #bubbleChart{
+      width: 100%;
+      height: 560px;
+    }
+
+    .bubble-tooltip{
+      position: absolute;
+      pointer-events: none;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid rgba(0,0,0,0.15);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+      font-size: 0.95rem;
+      line-height: 1.2;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 120ms ease, transform 120ms ease;
+    }
   </style>
 </head>
 
@@ -146,6 +179,7 @@
     <strong>Maven Capitol Consulting</strong>
     <ul>
       <li><a href="#what">What We Do</a></li>
+      <li><a href="#topics">Topics</a></li>
       <li><a href="#map">Session Tracker</a></li>
       <li><a href="#maven">Why Maven</a></li>
     </ul>
@@ -160,6 +194,21 @@
       Advanced legislative intelligence for Maryland businesses using
       machine-learning driven analysis and expert consulting.
     </p>
+  </div>
+</section>
+
+<!-- Topics Section (Bubble Chart) -->
+<section class="countdown-section" id="topics">
+  <div class="container">
+    <h2>Most Common MGA Topics (2024 Session)</h2>
+    <p style="margin-top:0.5rem; opacity:0.8;">
+      Bubble size reflects the number of bills where the <strong>first MGA topic</strong> appears first in <code>mga_topic</code>.
+      Hover to view topic labels.
+    </p>
+
+    <div class="bubble-wrap">
+      <div id="bubbleChart"></div>
+    </div>
   </div>
 </section>
 
@@ -197,52 +246,205 @@
 <script>
   document.addEventListener("DOMContentLoaded", async () => {
     try {
-      // Initialize map
-      const map = L.map("viewDiv", { scrollWheelZoom: false })
-        .setView([39.0, -76.8], 8);
+      /* =========================
+         MAP INITIALIZATION
+         ========================= */
 
-      // Add MD iMAP tile layer
-      L.tileLayer("https://geodata.md.gov/imap/services/Imagery/MD_SixInchImagery/MapServer/tile/{z}/{y}/{x}", {
-        attribution: '&copy; <a href="https://imap.maryland.gov/">MD iMAP</a> | <a href="https://opendata.maryland.gov/">State of Maryland</a>',
-        maxZoom: 20
+      const map = L.map("viewDiv", {
+        scrollWheelZoom: false,
+        attributionControl: false
+      }).setView([39.0, -76.8], 8);
+
+      L.control.attribution({
+        prefix: 'Leaflet'
       }).addTo(map);
 
-      // Fetch GeoJSON
-      const response = await fetch("MarylandGovMap.geojson");
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: 'MD iMAP | State of Maryland',
+        maxZoom: 19
+      }).addTo(map);
+
+      const response = await fetch("mdMap.json");
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const geojson = await response.json();
 
-      // Add GeoJSON layer
       const layer = L.geoJSON(geojson, {
         style: {
           color: "#000",
           weight: 1.5,
-          fillOpacity: 0.25
+          fillOpacity: 0,
+          fillColor: "transparent"
         },
         onEachFeature: (feature, lyr) => {
           const name =
+            feature?.properties?.COUNTY ||
             feature?.properties?.NAME ||
             feature?.properties?.name ||
-            "District";
+            "County";
+
           lyr.bindTooltip(name, { sticky: true });
+
+          lyr.on("mouseover", function () {
+            this.setStyle({
+              fillOpacity: 0.3,
+              fillColor: "#ffffff"
+            });
+          });
+
+          lyr.on("mouseout", function () {
+            this.setStyle({
+              fillOpacity: 0,
+              fillColor: "transparent"
+            });
+          });
         }
       }).addTo(map);
 
-      // Fit bounds to layer
+      L.geoJSON({
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [-180, -90],
+            [-180, 90],
+            [180, 90],
+            [180, -90],
+            [-180, -90]
+          ]]
+        }
+      }, {
+        style: {
+          color: "transparent",
+          fillColor: "#808080",
+          fillOpacity: 0.5,
+          weight: 0
+        },
+        interactive: false
+      }).addTo(map);
+
+      layer.bringToFront();
       map.fitBounds(layer.getBounds(), { padding: [20, 20] });
 
-      // Update timestamp
       document.getElementById("lastUpdated").textContent =
         new Date().toLocaleString();
+
+      /* =========================
+         BUBBLE CHART (MGA TOPICS)
+         ========================= */
+
+      const tooltip = d3.select("body")
+        .append("div")
+        .attr("class", "bubble-tooltip");
+
+      const rows = await d3.csv("MD_2024_MavenULTRA.csv", d => ({
+        bill_id: d.bill_id,
+        state: (d.state || "").trim(),
+        year: +d.year,
+        mga_topic: (d.mga_topic || "").trim()
+      }));
+
+      const md2024 = rows.filter(
+        r => r.state === "MD" && r.year === 2024 && r.mga_topic
+      );
+
+      const firstTopic = (s) => {
+        const t = s.split(";")[0].trim();
+        return t.length ? t : "Unknown";
+      };
+
+      const counts = d3.rollup(
+        md2024,
+        v => v.length,
+        r => firstTopic(r.mga_topic)
+      );
+
+      const data = Array.from(counts, ([topic, value]) => ({ topic, value }))
+        .sort((a, b) => d3.descending(b.value, a.value))
+        .slice(0, 35);
+
+      const container = document.getElementById("bubbleChart");
+      const width = container.clientWidth || 900;
+      const height = container.clientHeight || 560;
+
+      d3.select("#bubbleChart").selectAll("*").remove();
+
+      const svg = d3.select("#bubbleChart")
+        .append("svg")
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("width", "100%")
+        .attr("height", "100%");
+
+      const root = d3.hierarchy({ children: data })
+        .sum(d => d.value);
+
+      const pack = d3.pack()
+        .size([width, height])
+        .padding(6);
+
+      const nodes = pack(root).leaves();
+
+      const hashColor = (str) => {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) {
+          h = (h * 31 + str.charCodeAt(i)) >>> 0;
+        }
+        const v = 60 + (h % 140);
+        return `rgb(${v},${v},${v})`;
+      };
+
+      const g = svg.append("g");
+
+      const node = g.selectAll("g")
+        .data(nodes)
+        .enter()
+        .append("g")
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+
+      node.append("circle")
+        .attr("r", d => d.r)
+        .attr("fill", d => hashColor(d.data.topic))
+        .attr("fill-opacity", 0.18)
+        .attr("stroke", d => hashColor(d.data.topic))
+        .attr("stroke-opacity", 0.55)
+        .attr("stroke-width", 1.25)
+        .on("mousemove", (event, d) => {
+          tooltip
+            .style("left", (event.pageX + 12) + "px")
+            .style("top", (event.pageY - 20) + "px")
+            .style("opacity", 1)
+            .style("transform", "translateY(0px)")
+            .html(
+              `<strong>${d.data.topic}</strong><br/>Bills: ${d.data.value}`
+            );
+        })
+        .on("mouseout", () => {
+          tooltip
+            .style("opacity", 0)
+            .style("transform", "translateY(6px)");
+        });
+
+      node.append("text")
+        .attr("text-anchor", "middle")
+        .style("font-family", "Segoe UI, Tahoma, Geneva, Verdana, sans-serif")
+        .style("font-size", d => `${Math.max(10, Math.min(16, d.r / 3))}px`)
+        .style("opacity", d => (d.r > 32 ? 0.9 : 0))
+        .text(d => {
+          const s = d.data.topic;
+          return s.length > 28 ? s.slice(0, 28) + "…" : s;
+        });
+
     } catch (error) {
-      console.error("Map initialization error:", error);
+      console.error("Initialization error:", error);
       document.getElementById("viewDiv").innerHTML =
-        '<div style="padding:2rem;text-align:center;">Error loading map. Check console for details.</div>';
+        '<div style="padding:2rem;text-align:center;">Error: ' +
+        error.message +
+        '</div>';
     }
   });
 </script>
+
 
 </body>
 </html>
