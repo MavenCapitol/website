@@ -385,14 +385,19 @@
 
       const nodes = pack(root).leaves();
 
-      const hashColor = (str) => {
-        let h = 0;
-        for (let i = 0; i < str.length; i++) {
-          h = (h * 31 + str.charCodeAt(i)) >>> 0;
-        }
-        const v = 60 + (h % 140);
-        return `rgb(${v},${v},${v})`;
-      };
+      // Bright, professional categorical palette
+      const palette = [
+        "#4E79A7", "#F28E2B", "#E15759", "#76B7B2",
+        "#59A14F", "#EDC948", "#B07AA1", "#FF9DA7",
+        "#9C755F", "#BAB0AC", "#1F77B4", "#FF7F0E",
+        "#2CA02C", "#D62728", "#9467BD", "#8C564B",
+        "#E377C2", "#7F7F7F", "#BCBD22", "#17BECF"
+      ];
+
+      // Stable topic → color mapping
+      const colorScale = d3.scaleOrdinal()
+        .domain(data.map(d => d.topic))
+        .range(palette.concat(palette)); // safe if > palette length
 
       const g = svg.append("g");
 
@@ -402,14 +407,19 @@
         .append("g")
         .attr("transform", d => `translate(${d.x},${d.y})`);
 
-      node.append("circle")
+         node.append("circle")
         .attr("r", d => d.r)
-        .attr("fill", d => hashColor(d.data.topic))
-        .attr("fill-opacity", 0.18)
-        .attr("stroke", d => hashColor(d.data.topic))
-        .attr("stroke-opacity", 0.55)
-        .attr("stroke-width", 1.25)
+        .attr("fill", d => colorScale(d.data.topic))
+        .attr("fill-opacity", 0.75)
+        .attr("stroke", "#ffffff")
+        .attr("stroke-width", 2)
+        .style("filter", "drop-shadow(0px 6px 14px rgba(0,0,0,0.18))")
         .on("mousemove", (event, d) => {
+          d3.select(event.currentTarget)
+            .transition()
+            .duration(150)
+            .attr("transform", "scale(1.05)");
+
           tooltip
             .style("left", (event.pageX + 12) + "px")
             .style("top", (event.pageY - 20) + "px")
@@ -418,12 +428,17 @@
             .html(
               `<strong>${d.data.topic}</strong><br/>Bills: ${d.data.value}`
             );
-        })
-        .on("mouseout", () => {
-          tooltip
-            .style("opacity", 0)
-            .style("transform", "translateY(6px)");
-        });
+          })
+          .on("mouseout", (event) => {
+            d3.select(event.currentTarget)
+              .transition()
+              .duration(150)
+              .attr("transform", "scale(1)");
+
+            tooltip
+              .style("opacity", 0)
+              .style("transform", "translateY(6px)");
+          });
 
       node.append("text")
         .attr("text-anchor", "middle")
